@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UFF no US News Best Global Universities 2026-2027 | Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --light-bg: #f8fafc;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --border-radius: 10px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: #1f2937;
+      line-height: 1.5;
+      padding-top: 20px;
+      padding-bottom: 40px;
+    }
+
+    .container {
+      max-width: 1400px;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+      padding: 30px;
+      color: white;
+    }
+
+    .dashboard-header h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .dashboard-header p {
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 800px;
+      margin-bottom: 0;
+    }
+
+    .header-badge {
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      display: inline-block;
+    }
+
+    .indicator-card {
+      border-radius: var(--border-radius);
+      border: none;
+      background: #fff;
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      height: 100%;
+      margin-bottom: 20px;
+      overflow: hidden;
+      border-top: 4px solid;
+    }
+
+    .indicator-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .indicator-card .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .indicator-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      line-height: 1.1;
+    }
+
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 0;
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      opacity: 0.9;
+    }
+
+    .card-1 {
+      border-top-color: #3B82F6;
+    }
+
+    .card-1 .indicator-value,
+    .card-1 .card-icon {
+      color: #3B82F6;
+    }
+
+    .card-2 {
+      border-top-color: #10B981;
+    }
+
+    .card-2 .indicator-value,
+    .card-2 .card-icon {
+      color: #10B981;
+    }
+
+    .card-3 {
+      border-top-color: #F59E0B;
+    }
+
+    .card-3 .indicator-value,
+    .card-3 .card-icon {
+      color: #F59E0B;
+    }
+
+    .card-4 {
+      border-top-color: #EF4444;
+    }
+
+    .card-4 .indicator-value,
+    .card-4 .card-icon {
+      color: #EF4444;
+    }
+
+    .section-header {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+    }
+
+    .world-section {
+      border-left-color: #1e40af;
+    }
+
+    .subject-section {
+      border-left-color: #059669;
+    }
+
+    .indicators-section {
+      border-left-color: #b45309;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-icon {
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+
+    .world-icon {
+      color: #1e40af;
+    }
+
+    .subject-icon {
+      color: #059669;
+    }
+
+    .indicators-icon {
+      color: #b45309;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 20px;
+      margin-bottom: 25px;
+      height: 100%;
+    }
+
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .chart-tabs {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 110px;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #6b7280;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .tab-btn:hover {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: #059669;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .footer-note {
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 767.98px) {
+      body {
+        padding-top: 12px;
+      }
+
+      .container {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .chart-container {
+        padding: 14px;
+      }
+
+      .chart-title {
+        font-size: 1rem;
+      }
+
+      .tab-btn {
+        flex: 0 0 calc(50% - 4px);
+        min-width: 0;
+        font-size: 0.78rem;
+        padding: 8px 6px;
+      }
+
+      .section-header {
+        padding: 16px;
+      }
+
+      .indicator-card .card-body {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-header {
+        padding: 25px;
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .indicator-value {
+        font-size: 1.9rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header h1 {
+        font-size: 1.6rem;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="dashboard-header">
+      <div class="row align-items-center">
+        <div class="col-lg-9">
+          <h1>A UFF no US News Best Global Universities</h1>
+          <p>Edição 2026-2027. Posição geral, desempenho nas 9 áreas ranqueadas e os 13 indicadores do ranking.</p>
+        </div>
+        <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+          <span class="header-badge"><i class="fas fa-calendar me-1"></i> Edição 2026-2027</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posicionamento -->
+    <div class="row mb-4">
+      <div class="col-12 mb-3">
+        <div class="section-header world-section">
+          <h2 class="section-title">
+            <i class="fas fa-globe-americas section-icon world-icon"></i>Posicionamento geral
+          </h2>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <div class="indicator-card card-1">
+          <div class="card-body text-center">
+            <div class="card-icon"><i class="fas fa-globe"></i></div>
+            <h5 class="card-title">Mundo</h5>
+            <div class="indicator-value">1290º</div>
+            <p class="card-subtitle">entre 2.250 instituições</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <div class="indicator-card card-2">
+          <div class="card-body text-center">
+            <div class="card-icon"><i class="fas fa-earth-americas"></i></div>
+            <h5 class="card-title">América Latina</h5>
+            <div class="indicator-value">46º</div>
+            <p class="card-subtitle">ranking regional</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <div class="indicator-card card-3">
+          <div class="card-body text-center">
+            <div class="card-icon"><i class="fas fa-flag"></i></div>
+            <h5 class="card-title">Brasil</h5>
+            <div class="indicator-value">20º</div>
+            <p class="card-subtitle">ranking nacional</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <div class="indicator-card card-4">
+          <div class="card-body text-center">
+            <div class="card-icon"><i class="fas fa-star"></i></div>
+            <h5 class="card-title">Pontuação global</h5>
+            <div class="indicator-value">32,6</div>
+            <p class="card-subtitle">escala de 0 a 100</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Áreas -->
+    <div class="row mb-4">
+      <div class="col-12 mb-3">
+        <div class="section-header subject-section">
+          <h2 class="section-title">
+            <i class="fas fa-layer-group section-icon subject-icon"></i>Áreas do conhecimento
+          </h2>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-3">
+        <div class="chart-container">
+          <h4 class="chart-title">Posição por área</h4>
+          <div id="areas-rank-chart"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-3">
+        <div class="chart-container">
+          <h4 class="chart-title">Pontuação por área</h4>
+          <div id="areas-score-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="row mb-4">
+      <div class="col-12 mb-3">
+        <div class="section-header indicators-section">
+          <h2 class="section-title">
+            <i class="fas fa-chart-bar section-icon indicators-icon"></i>Os 13 indicadores do ranking
+          </h2>
+        </div>
+      </div>
+
+      <div class="col-12 mb-3">
+        <div class="chart-container">
+          <h4 class="chart-title">Posição em cada indicador</h4>
+          <div id="indicators-chart"></div>
+        </div>
+      </div>
+
+      <div class="col-12 mb-3">
+        <div class="chart-container">
+          <h4 class="chart-title">Publicar e ser citado</h4>
+          <div id="gap-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalhe por área -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="chart-container">
+          <h4 class="chart-title">Indicadores por área</h4>
+          <div class="chart-tabs mb-3" id="area-tabs"></div>
+          <div id="area-detail-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <p class="mb-2">
+        <i class="fas fa-database me-1"></i>
+        Dados do US News Best Global Universities 2026-2027 | bibliometria Clarivate (Web of Science, 2020-2024)
+      </p>
+      <p class="mb-0">
+        <i class="fa-solid fa-arrow-trend-up me-1"></i>
+        <a href="https://www.uff.br/proplan/uff-em-numeros/" target="_blank" style="text-decoration: none;">Desenvolvido
+          pela PGI/PLAN - UFF</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const colors = {
+      blue: '#3B82F6',
+      green: '#10B981',
+      orange: '#F59E0B',
+      red: '#EF4444',
+      purple: '#8B5CF6',
+      teal: '#118AB2'
+    };
+
+    const areas = [
+      {
+        nome: 'Ciência de Alimentos', pos: 234, score: 24.8,
+        ind: { repRegional: null, repGlobal: null, pub: 197, citacoes: 206, impacto: 192, top10: 174, top1: 122, colabInt: 249 }
+      },
+      {
+        nome: 'Ciências Agrárias', pos: 396, score: 28.6,
+        ind: { repRegional: 29, repGlobal: 270, pub: 264, citacoes: 302, impacto: 375, top10: 315, top1: 243, colabInt: 441 }
+      },
+      {
+        nome: 'Ciências Vegetais e Animais', pos: 687, score: 23.3,
+        ind: { repRegional: 16, repGlobal: 256, pub: 431, citacoes: 643, impacto: 708, top10: 759, top1: 746, colabInt: 655 }
+      },
+      {
+        nome: 'Física', pos: 814, score: 26.1,
+        ind: { repRegional: 20, repGlobal: 380, pub: 538, citacoes: 750, impacto: 938, top10: 956, top1: 932, colabInt: 696 }
+      },
+      {
+        nome: 'Ambientais/Ecologia', pos: 820, score: 27.8,
+        ind: { repRegional: 25, repGlobal: 281, pub: 601, citacoes: 736, impacto: 896, top10: 919, top1: 962, colabInt: 674 }
+      },
+      {
+        nome: 'Ciência da Computação', pos: 945, score: 16.3,
+        ind: { repRegional: 14, repGlobal: 496, pub: 803, citacoes: 1032, impacto: 1056, top10: 1052, top1: 993, colabInt: 665 }
+      },
+      {
+        nome: 'Medicina Clínica', pos: 1128, score: 24.1,
+        ind: { repRegional: 35, repGlobal: 697, pub: 736, citacoes: 1107, impacto: 1353, top10: 1361, top1: 1274, colabInt: 774 }
+      },
+      {
+        nome: 'Química', pos: 1410, score: 25.6,
+        ind: { repRegional: 43, repGlobal: 569, pub: 746, citacoes: 1107, impacto: 1557, top10: 1568, top1: 1491, colabInt: 1049 }
+      },
+      {
+        nome: 'Engenharia', pos: 1474, score: 17.2,
+        ind: { repRegional: 43, repGlobal: 876, pub: 908, citacoes: 1314, impacto: 1569, top10: 1545, top1: 1418, colabInt: 1075 }
+      }
+    ];
+
+    const indicadores = [
+      { nome: 'Reputação regional', pos: 34, dim: 'Reputação' },
+      { nome: 'Conferências', pos: 610, dim: 'Produção' },
+      { nome: 'Livros', pos: 682, dim: 'Produção' },
+      { nome: 'Publicações', pos: 740, dim: 'Produção' },
+      { nome: 'Reputação global', pos: 981, dim: 'Reputação' },
+      { nome: 'Citações totais', pos: 1101, dim: 'Impacto' },
+      { nome: 'Nº de pub. entre as 10% mais citadas', pos: 1220, dim: 'Impacto' },
+      { nome: 'Colaboração internacional', pos: 1498, dim: 'Colaboração' },
+      { nome: 'Colaboração internacional no país', pos: 1616, dim: 'Colaboração' },
+      { nome: 'Nº de pub. entre as 1% mais citadas', pos: 1689, dim: 'Impacto' },
+      { nome: '% de pub. entre as 10% mais citadas', pos: 2338, dim: 'Impacto' },
+      { nome: 'Impacto normalizado de citações', pos: 2348, dim: 'Impacto' },
+      { nome: '% de pub. entre as 1% mais citadas', pos: 2373, dim: 'Impacto' }
+    ];
+
+    const dimCores = {
+      'Reputação': colors.purple,
+      'Produção': colors.blue,
+      'Impacto': colors.red,
+      'Colaboração': colors.orange
+    };
+
+    const chartConfig = { responsive: true, displayModeBar: false, displaylogo: false };
+
+    const isMobile = () => window.innerWidth < 768;
+    const fmt = n => n.toLocaleString('pt-BR');
+
+    // Rótulos curtos usados apenas em telas estreitas
+    const curto = {
+      'Nº de pub. entre as 10% mais citadas': 'Nº pub. top 10%',
+      'Nº de pub. entre as 1% mais citadas': 'Nº pub. top 1%',
+      '% de pub. entre as 10% mais citadas': '% pub. top 10%',
+      '% de pub. entre as 1% mais citadas': '% pub. top 1%',
+      'Impacto normalizado de citações': 'Impacto normalizado',
+      'Colaboração internacional no país': 'Colab. int. no país',
+      'Colaboração internacional': 'Colab. internacional',
+      'Citações totais': 'Citações',
+      'Reputação regional': 'Rep. regional',
+      'Reputação global': 'Rep. global',
+      'Ciências Vegetais e Animais': 'Ciências Veg./Animais',
+      'Ciência da Computação': 'Computação',
+      'Ciência de Alimentos': 'Alimentos',
+      'Ciências Agrárias': 'Agrárias',
+      'Ambientais/Ecologia': 'Ambientais/Ecol.',
+      'Medicina Clínica': 'Med. Clínica',
+      '% entre as 10% mais citadas': '% top 10%',
+      '% entre as 1% mais citadas': '% top 1%',
+      'Impacto de citações': 'Impacto',
+      'Impacto normalizado': 'Impacto norm.'
+    };
+
+    const rot = t => (isMobile() && curto[t]) ? curto[t] : t;
+
+    // Layout base sensível ao tamanho da tela
+    function baseLayout() {
+      const m = isMobile();
+      return {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { family: 'Inter, sans-serif', color: '#1f2937' },
+        hovermode: 'closest',
+        showlegend: false,
+        margin: { t: 10, r: m ? 46 : 70, b: 50, l: 6 },
+        xaxis: {
+          fixedrange: true,
+          gridcolor: 'rgba(0,0,0,0.05)',
+          showgrid: true,
+          showline: true,
+          linecolor: 'rgba(0,0,0,0.1)',
+          zeroline: false,
+          automargin: true,
+          nticks: m ? 4 : 8,
+          tickfont: { size: m ? 9 : 10, color: '#6b7280' },
+          title: { font: { size: m ? 10 : 11, color: '#6b7280' } }
+        },
+        yaxis: {
+          fixedrange: true,
+          showgrid: false,
+          showline: false,
+          zeroline: false,
+          automargin: true,
+          tickfont: { size: m ? 9 : 11, color: '#374151' }
+        }
+      };
+    }
+
+    // Legenda no topo no desktop, abaixo do gráfico no celular
+    function legendaLayout() {
+      const m = isMobile();
+      return m
+        ? {
+          showlegend: true,
+          legend: { orientation: 'h', y: -0.16, yanchor: 'top', x: 0.5, xanchor: 'center', font: { size: 10, color: '#4b5563' } }
+        }
+        : {
+          showlegend: true,
+          legend: { orientation: 'h', y: 1.1, yanchor: 'bottom', x: 0, xanchor: 'left', font: { size: 12, color: '#4b5563' } }
+        };
+    }
+
+    const valorFont = cor => ({ size: isMobile() ? 9 : 11, color: cor, family: 'Inter, sans-serif' });
+
+    function createAreasRankChart() {
+      const m = isMobile();
+      const ord = [...areas].sort((a, b) => b.pos - a.pos);
+      const trace = {
+        x: ord.map(a => a.pos), y: ord.map(a => rot(a.nome)),
+        type: 'bar', orientation: 'h',
+        marker: { color: colors.teal, opacity: 0.85 },
+        text: ord.map(a => fmt(a.pos) + 'º'),
+        textposition: 'outside',
+        textfont: valorFont('#0e7490'),
+        cliponaxis: false,
+        hovertemplate: '<b>%{y}</b><br>Posição: %{x}º<extra></extra>'
+      };
+      const layout = {
+        ...baseLayout(),
+        height: m ? 380 : 400,
+        xaxis: { ...baseLayout().xaxis, title: 'Posição na área', range: [0, m ? 1900 : 1750] }
+      };
+      Plotly.newPlot('areas-rank-chart', [trace], layout, chartConfig);
+    }
+
+    function createAreasScoreChart() {
+      const m = isMobile();
+      const ord = [...areas].sort((a, b) => a.score - b.score);
+      const trace = {
+        x: ord.map(a => a.score), y: ord.map(a => rot(a.nome)),
+        type: 'bar', orientation: 'h',
+        marker: { color: colors.green, opacity: 0.85 },
+        text: ord.map(a => a.score.toFixed(1).replace('.', ',')),
+        textposition: 'outside',
+        textfont: valorFont('#047857'),
+        cliponaxis: false,
+        hovertemplate: '<b>%{y}</b><br>Pontuação: %{x}<extra></extra>'
+      };
+      const layout = {
+        ...baseLayout(),
+        height: m ? 380 : 400,
+        xaxis: { ...baseLayout().xaxis, title: 'Pontuação', range: [0, m ? 36 : 34] }
+      };
+      Plotly.newPlot('areas-score-chart', [trace], layout, chartConfig);
+    }
+
+    function createIndicatorsChart() {
+      const m = isMobile();
+      const ord = [...indicadores].sort((a, b) => b.pos - a.pos);
+      const traces = Object.keys(dimCores).map(dim => {
+        const itens = ord.filter(i => i.dim === dim);
+        return {
+          name: dim,
+          x: itens.map(i => i.pos),
+          y: itens.map(i => rot(i.nome)),
+          type: 'bar',
+          orientation: 'h',
+          marker: { color: dimCores[dim], opacity: 0.88 },
+          text: itens.map(i => fmt(i.pos) + 'º'),
+          textposition: 'outside',
+          textfont: valorFont('#4b5563'),
+          cliponaxis: false,
+          hovertemplate: '<b>%{y}</b><br>Posição: %{x}º<extra>' + dim + '</extra>'
+        };
+      });
+      const base = baseLayout();
+      const layout = {
+        ...base,
+        ...legendaLayout(),
+        height: m ? 560 : 520,
+        barmode: 'stack',
+        margin: { ...base.margin, t: m ? 10 : 50, b: m ? 100 : 50 },
+        yaxis: { ...base.yaxis, categoryorder: 'array', categoryarray: ord.map(i => rot(i.nome)) },
+        xaxis: { ...base.xaxis, title: 'Posição entre as instituições avaliadas', range: [0, m ? 2950 : 2650] }
+      };
+      Plotly.newPlot('indicators-chart', traces, layout, chartConfig);
+    }
+
+    function createGapChart() {
+      const m = isMobile();
+      const dados = [
+        { nome: 'Ranking geral', pub: 740, impacto: 2348 },
+        ...areas.map(a => ({ nome: a.nome, pub: a.ind.pub, impacto: a.ind.impacto }))
+      ].sort((a, b) => (b.impacto - b.pub) - (a.impacto - a.pub));
+
+      const tracePub = {
+        name: 'Publicações',
+        x: dados.map(d => d.pub),
+        y: dados.map(d => rot(d.nome)),
+        type: 'bar', orientation: 'h', cliponaxis: false,
+        marker: { color: colors.blue, opacity: 0.88 },
+        text: dados.map(d => fmt(d.pub) + 'º'),
+        textposition: 'outside',
+        textfont: valorFont('#1d4ed8'),
+        hovertemplate: '<b>%{y}</b><br>Publicações: %{x}º<extra></extra>'
+      };
+
+      const traceImp = {
+        name: 'Impacto de citações',
+        x: dados.map(d => d.impacto),
+        y: dados.map(d => rot(d.nome)),
+        type: 'bar', orientation: 'h', cliponaxis: false,
+        marker: { color: colors.red, opacity: 0.88 },
+        text: dados.map(d => fmt(d.impacto) + 'º'),
+        textposition: 'outside',
+        textfont: valorFont('#b91c1c'),
+        hovertemplate: '<b>%{y}</b><br>Impacto de citações: %{x}º<extra></extra>'
+      };
+
+      const base = baseLayout();
+      const layout = {
+        ...base,
+        ...legendaLayout(),
+        height: m ? 620 : 520,
+        barmode: 'group',
+        bargap: 0.28,
+        bargroupgap: 0.05,
+        margin: { ...base.margin, t: m ? 10 : 50, b: m ? 100 : 50 },
+        yaxis: { ...base.yaxis, categoryorder: 'array', categoryarray: [...dados].reverse().map(d => rot(d.nome)) },
+        xaxis: { ...base.xaxis, title: 'Posição (quanto menor, melhor)', range: [0, m ? 2950 : 2650] }
+      };
+
+      Plotly.newPlot('gap-chart', [tracePub, traceImp], layout, chartConfig);
+    }
+
+    const rotulosInd = [
+      { chave: 'repRegional', rotulo: 'Reputação regional' },
+      { chave: 'repGlobal', rotulo: 'Reputação global' },
+      { chave: 'pub', rotulo: 'Publicações' },
+      { chave: 'citacoes', rotulo: 'Citações totais' },
+      { chave: 'impacto', rotulo: 'Impacto normalizado' },
+      { chave: 'top10', rotulo: '% entre as 10% mais citadas' },
+      { chave: 'top1', rotulo: '% entre as 1% mais citadas' },
+      { chave: 'colabInt', rotulo: 'Colaboração internacional' }
+    ];
+
+    let areaAtiva = null;
+
+    function createAreaDetailChart(nomeArea) {
+      areaAtiva = nomeArea;
+      const m = isMobile();
+      const area = areas.find(a => a.nome === nomeArea);
+      const itens = rotulosInd
+        .filter(r => area.ind[r.chave] !== null)
+        .map(r => ({ rotulo: rot(r.rotulo), pos: area.ind[r.chave] }))
+        .sort((a, b) => b.pos - a.pos);
+
+      const trace = {
+        x: itens.map(i => i.pos), y: itens.map(i => i.rotulo),
+        type: 'bar', orientation: 'h',
+        marker: { color: colors.green, opacity: 0.85 },
+        text: itens.map(i => fmt(i.pos) + 'º'),
+        textposition: 'outside',
+        textfont: valorFont('#047857'),
+        cliponaxis: false,
+        hovertemplate: '<b>%{y}</b><br>Posição: %{x}º<extra></extra>'
+      };
+
+      const maxPos = Math.max(...itens.map(i => i.pos));
+      const layout = {
+        ...baseLayout(),
+        height: m ? 380 : 400,
+        xaxis: { ...baseLayout().xaxis, title: 'Posição na área', range: [0, maxPos * (m ? 1.3 : 1.2)] }
+      };
+
+      Plotly.newPlot('area-detail-chart', [trace], layout, chartConfig);
+    }
+
+    function buildAreaTabs() {
+      const wrap = document.getElementById('area-tabs');
+      areas.forEach((a, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+        btn.textContent = a.nome;
+        btn.addEventListener('click', () => {
+          wrap.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          createAreaDetailChart(a.nome);
+        });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function renderAll() {
+      createAreasRankChart();
+      createAreasScoreChart();
+      createIndicatorsChart();
+      createGapChart();
+      createAreaDetailChart(areaAtiva || areas[0].nome);
+    }
+
+    // Redesenha ao cruzar o ponto de quebra (rótulos e legenda mudam de forma)
+    let larguraMobile = null;
+    let resizeTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        if (isMobile() !== larguraMobile) {
+          larguraMobile = isMobile();
+          renderAll();
+        }
+      }, 200);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      larguraMobile = isMobile();
+      buildAreaTabs();
+      renderAll();
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
