@@ -28,6 +28,7 @@
       --c-rur: #2563eb;
       --c-web: #0c7d3e;
       --c-scimago: #6d28d9;
+      --c-usnews: #0e7490;
     }
 
     * {
@@ -159,6 +160,15 @@
     .synth-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 18px 38px rgba(0, 0, 0, 0.10);
+    }
+
+    /* Card que sobra sozinho na última linha: centraliza em vez de encostar
+       à esquerda. Remover a classe quando um novo ranking preencher a linha. */
+    .synth-card--solo {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: 100%;
+      max-width: 285px;
     }
 
     .synth-head {
@@ -419,11 +429,23 @@
       0% {
         box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
       }
+
       25% {
         box-shadow: 0 0 0 4px var(--white), 0 0 0 8px var(--accent, var(--primary-blue));
       }
+
       100% {
         box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+      }
+    }
+
+    /* Abaixo de 540px o grid já tem uma coluna só: o card volta ao normal.
+       (2 colunas exigem 2 x 240px + 20px de gap + 40px de padding lateral) */
+    @media (max-width: 539.98px) {
+      .synth-card--solo {
+        grid-column: auto;
+        justify-self: stretch;
+        max-width: none;
       }
     }
 
@@ -480,6 +502,7 @@
       .acc-title {
         font-size: 1.05rem;
       }
+
     }
   </style>
 </head>
@@ -708,6 +731,23 @@
         </div>
       </div>
 
+      <!-- 13. US News -->
+      <div class="synth-card synth-card--solo" style="--accent: var(--c-usnews);" onclick="goToRanking('cta-usnews')">
+        <div class="synth-head">
+          <span class="synth-icon">🗞️</span>
+          <div>
+            <div class="synth-name">US News</div>
+            <div class="synth-year">Edição 2026-2027</div>
+          </div>
+        </div>
+        <div class="synth-big">20º</div>
+        <div class="synth-big-label">no Brasil</div>
+        <div class="synth-tags">
+          <span class="synth-tag">1290º no Mundo</span>
+          <span class="synth-tag">46º na América Latina</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- ============ NAVEGAÇÃO + TEXTO DESCRITIVO ============ -->
@@ -731,12 +771,21 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>Desde 2012, o CWUR publica o único ranking acadêmico de universidades globais que avalia a qualidade do ensino, a empregabilidade, a pesquisa e a qualidade do corpo docente sem depender de pesquisas ou dados fornecidos pelas universidades.</p>
-              <p>O ranking começou como um projeto em Jeddah, na Arábia Saudita, com o objetivo de classificar as 100 melhores universidades do mundo. Foi rapidamente divulgado em todo o mundo pelas universidades e pela mídia e muitos pedidos foram recebidos para expandi-lo. Em 2019, o ranking se expandiu para listar as 2000 melhores entre quase vinte mil universidades em todo o mundo, tornando-se o maior ranking acadêmico de universidades globais.</p>
+              <p>Desde 2012, o CWUR publica o único ranking acadêmico de universidades globais que avalia a qualidade do
+                ensino, a empregabilidade, a pesquisa e a qualidade do corpo docente sem depender de pesquisas ou dados
+                fornecidos pelas universidades.</p>
+              <p>O ranking começou como um projeto em Jeddah, na Arábia Saudita, com o objetivo de classificar as 100
+                melhores universidades do mundo. Foi rapidamente divulgado em todo o mundo pelas universidades e pela
+                mídia e muitos pedidos foram recebidos para expandi-lo. Em 2019, o ranking se expandiu para listar as
+                2000 melhores entre quase vinte mil universidades em todo o mundo, tornando-se o maior ranking acadêmico
+                de universidades globais.</p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
-              <p>Em 2026, a UFF foi classificada no top 4,8% mundial de mais de 21 mil universidades participantes neste ranking, segundo o CWUR. No Brasil, ela se manteve no 18º lugar, enquanto na América Latina está em 31º. Destaca-se ainda o 8º lugar nacional alcançado nos últimos rankings de empregabilidade (Employability rank), posição mantida desde 2022.</p>
+              <p>Em 2026, a UFF foi classificada no top 4,8% mundial de mais de 21 mil universidades participantes neste
+                ranking, segundo o CWUR. No Brasil, ela se manteve no 18º lugar, enquanto na América Latina está em 31º.
+                Destaca-se ainda o 8º lugar nacional alcançado nos últimos rankings de empregabilidade (Employability
+                rank), posição mantida desde 2022.</p>
             </div>
             <div class="acc-links">
               <a class="acc-cta" id="cta-cwur" href="https://pgi-plan.github.io/rankings/cwur.html" target="_blank">
@@ -762,19 +811,45 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>O Times Higher Education (THE) fornece dados de desempenho universitário no cenário global, providenciando um recurso para que leitores do mundo compreendam as diferentes missões e sucessos das instituições de ensino superior. Com 18 indicadores de desempenho cuidadosamente calibrados para fornecer as comparações mais abrangentes e equilibradas, o THE cobre as principais áreas de atividade universitária: ensino, pesquisa, transferência de conhecimento e perspectiva internacional.</p>
-              <p>De 2004 até 2009, o THE tinha parceria com a empresa britânica Quacquarelli Symonds (QS). Por conta das críticas, o THE ajustou sua metodologia em 2005, 2007, 2008 e 2009, até desfazer a parceria com a QS, em outubro de 2009. Em 2010, o THE adotou nova metodologia.</p>
-              <p>Publica atualmente uma série de rankings, dentre os quais o Ranking Global (THE World University Rankings), o Ranking de Disciplinas (THE World University Rankings by Subject), o Ranking das Universidades da América Latina (Latin America University Rankings) e o Ranking de Sustentabilidade (THE Impact Rankings).</p>
+              <p>O Times Higher Education (THE) fornece dados de desempenho universitário no cenário global,
+                providenciando um recurso para que leitores do mundo compreendam as diferentes missões e sucessos das
+                instituições de ensino superior. Com 18 indicadores de desempenho cuidadosamente calibrados para
+                fornecer as comparações mais abrangentes e equilibradas, o THE cobre as principais áreas de atividade
+                universitária: ensino, pesquisa, transferência de conhecimento e perspectiva internacional.</p>
+              <p>De 2004 até 2009, o THE tinha parceria com a empresa britânica Quacquarelli Symonds (QS). Por conta das
+                críticas, o THE ajustou sua metodologia em 2005, 2007, 2008 e 2009, até desfazer a parceria com a QS, em
+                outubro de 2009. Em 2010, o THE adotou nova metodologia.</p>
+              <p>Publica atualmente uma série de rankings, dentre os quais o Ranking Global (THE World University
+                Rankings), o Ranking de Disciplinas (THE World University Rankings by Subject), o Ranking das
+                Universidades da América Latina (Latin America University Rankings) e o Ranking de Sustentabilidade (THE
+                Impact Rankings).</p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
-                <p>Nos últimos anos, a classificação mundial e a pontuação geral da UFF vêm se mantendo estáveis, com pequenas variações em função da adesão de novas universidades ao ranking. Já no Brasil, percebe-se uma melhora significativa, já que no último ranking mundial divulgado (Times Higher Education World University Rankings 2026) a UFF ficou em 16º entre as brasileiras e 10º entre as federais – subindo, respectivamente, 4 e 3 posições em relação ao ano anterior. Em relação a 2023, a universidade avançou 13 posições no Brasil e 9 entre as federais.</p>
+              <p>Nos últimos anos, a classificação mundial e a pontuação geral da UFF vêm se mantendo estáveis, com
+                pequenas variações em função da adesão de novas universidades ao ranking. Já no Brasil, percebe-se uma
+                melhora significativa, já que no último ranking mundial divulgado (Times Higher Education World
+                University Rankings 2026) a UFF ficou em 16º entre as brasileiras e 10º entre as federais – subindo,
+                respectivamente, 4 e 3 posições em relação ao ano anterior. Em relação a 2023, a universidade avançou 13
+                posições no Brasil e 9 entre as federais.</p>
 
-                <p><strong>Observação sobre a interpretação dos resultados:</strong> A análise da tabela de resultados do Times Higher Education World University Rankings deve ser realizada com cautela, uma vez que apenas as 200 primeiras universidades recebem uma posição específica no ranking global. As instituições classificadas abaixo desse limite são agrupadas em faixas de desempenho e organizadas alfabeticamente dentro de cada faixa. Portanto, segundo o ranking, todas as universidades classificadas dentro da mesma faixa têm a mesma posição.</p>
+              <p><strong>Observação sobre a interpretação dos resultados:</strong> A análise da tabela de resultados do
+                Times Higher Education World University Rankings deve ser realizada com cautela, uma vez que apenas as
+                200 primeiras universidades recebem uma posição específica no ranking global. As instituições
+                classificadas abaixo desse limite são agrupadas em faixas de desempenho e organizadas alfabeticamente
+                dentro de cada faixa. Portanto, segundo o ranking, todas as universidades classificadas dentro da mesma
+                faixa têm a mesma posição.</p>
 
-                <p>Em relação às áreas temáticas, a UFF tem alcançado melhores colocações em Direito e Artes e Humanidades, mantendo-se, respectivamente, sempre entre as 400 e 500 melhores do mundo.</p>
+              <p>Em relação às áreas temáticas, a UFF tem alcançado melhores colocações em Direito e Artes e
+                Humanidades, mantendo-se, respectivamente, sempre entre as 400 e 500 melhores do mundo.</p>
 
-                <p>No THE Latin America Rankings, que utiliza os mesmos indicadores de desempenho do ranking global, porém com pesos recalibrados para refletir as características da América Latina, a UFF ocupa atualmente a 48ª colocação. É importante destacar que, em 2026, as universidades foram avaliadas em relação à população global de instituições do World University Rankings, em vez de apenas em comparação com outras universidades da região da América Latina, como nos anos anteriores. Isso implica uma mudança de metodologia que impacta diretamente na pontuação e classificação da universidade. O próprio ranking recomenda levar isso em consideração ao comparar os resultados alcançados com os de anos anteriores.</p>
+              <p>No THE Latin America Rankings, que utiliza os mesmos indicadores de desempenho do ranking global, porém
+                com pesos recalibrados para refletir as características da América Latina, a UFF ocupa atualmente a 48ª
+                colocação. É importante destacar que, em 2026, as universidades foram avaliadas em relação à população
+                global de instituições do World University Rankings, em vez de apenas em comparação com outras
+                universidades da região da América Latina, como nos anos anteriores. Isso implica uma mudança de
+                metodologia que impacta diretamente na pontuação e classificação da universidade. O próprio ranking
+                recomenda levar isso em consideração ao comparar os resultados alcançados com os de anos anteriores.</p>
             </div>
             <div class="acc-block">
               <h4>Sobre o ranking · THE Impact Rankings</h4>
@@ -805,7 +880,8 @@
             <div class="acc-links">
               <a class="acc-cta" id="cta-the" href="https://pgi-plan.github.io/rankings/the.html" target="_blank">
                 Acessar Dashboard THE →</a>
-              <a class="acc-cta" id="cta-the-impact" href="https://pgi-plan.github.io/rankings/the_impact_rankings.html" target="_blank">
+              <a class="acc-cta" id="cta-the-impact" href="https://pgi-plan.github.io/rankings/the_impact_rankings.html"
+                target="_blank">
                 Acessar Dashboard THE Impact →</a>
               <a class="acc-site" href="https://www.timeshighereducation.com/world-university-rankings" target="_blank"
                 rel="noopener">Site oficial do THE ↗</a>
@@ -844,21 +920,72 @@
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
-              <p>No último ranking mundial divulgado (QS World University Rankings 2027), a UFF foi considerada a 9ª melhor universidade federal do Brasil e a 72ª da América Latina.</p>
-              <p><strong>Observação sobre a interpretação dos resultados: </strong>a análise da tabela de resultados do QS World University Rankings deve ser realizada com cuidado, uma vez que <strong>apenas as 600 primeiras universidades recebem uma posição específica no ranking global. As instituições classificadas abaixo desse limite são agrupadas em faixas de desempenho e organizadas alfabeticamente dentro de cada faixa</strong>. Portanto, a metodologia adotada pode gerar interpretações equivocadas das posições das universidades no ranking, exigindo cautela por parte do público que consome essa informação.</p>
-              <p>Com uma tendência de aumento em sua pontuação nos últimos anos, a UFF também ocupa atualmente a 64ª colocação no QS Latin America & The Caribbean Rankings 2026 e está classificada entre as 37 melhores universidades do Cone Sul. Nesse mesmo ranking, manteve a 14ª posição entre as brasileiras, apesar do aumento de mais de 30% no número de participantes no último ano.</p>
-              <p>Desde 2023, a UFF fornece dados para o Ranking Mundial de Sustentabilidade da QS. Os resultados do QS Sustainability Rankings mostram que a universidade se manteve em 6ª lugar entre as federais do Brasil nos últimos três anos, apresentando uma tendência de melhora em sua pontuação e classificação mundial.</p>
-      
+              <p>No último ranking mundial divulgado (QS World University Rankings 2027), a UFF foi considerada a 9ª
+                melhor universidade federal do Brasil e a 72ª da América Latina.</p>
+              <p><strong>Observação sobre a interpretação dos resultados: </strong>a análise da tabela de resultados do
+                QS World University Rankings deve ser realizada com cuidado, uma vez que <strong>apenas as 600 primeiras
+                  universidades recebem uma posição específica no ranking global. As instituições classificadas abaixo
+                  desse limite são agrupadas em faixas de desempenho e organizadas alfabeticamente dentro de cada
+                  faixa</strong>. Portanto, a metodologia adotada pode gerar interpretações equivocadas das posições das
+                universidades no ranking, exigindo cautela por parte do público que consome essa informação.</p>
+              <p>Com uma tendência de aumento em sua pontuação nos últimos anos, a UFF também ocupa atualmente a 64ª
+                colocação no QS Latin America & The Caribbean Rankings 2026 e está classificada entre as 37 melhores
+                universidades do Cone Sul. Nesse mesmo ranking, manteve a 14ª posição entre as brasileiras, apesar do
+                aumento de mais de 30% no número de participantes no último ano.</p>
+              <p>Desde 2023, a UFF fornece dados para o Ranking Mundial de Sustentabilidade da QS. Os resultados do QS
+                Sustainability Rankings mostram que a universidade se manteve em 6ª lugar entre as federais do Brasil
+                nos últimos três anos, apresentando uma tendência de melhora em sua pontuação e classificação mundial.
+              </p>
+
             </div>
             <div class="acc-links">
               <a class="acc-cta" id="cta-qs" href="https://pgi-plan.github.io/rankings/qs.html" target="_blank">
                 Acessar Dashboard QS →</a>
               <a class="acc-site" href="https://www.topuniversities.com/world-university-rankings" target="_blank"
                 rel="noopener">Site oficial do QS World ↗</a>
-              <a class="acc-site" href="https://www.topuniversities.com/latin-america-caribbean-overall"
-                target="_blank" rel="noopener">Site oficial do QS América Latina ↗</a>
+              <a class="acc-site" href="https://www.topuniversities.com/latin-america-caribbean-overall" target="_blank"
+                rel="noopener">Site oficial do QS América Latina ↗</a>
               <a class="acc-site" href="https://www.topuniversities.com/sustainability-rankings" target="_blank"
                 rel="noopener">Site oficial do QS Sustainability ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== US NEWS ===== -->
+      <div class="acc-item" id="r-usnews" style="--accent: var(--c-usnews);">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          <span class="acc-icon">🗞️</span>
+          <div class="acc-titles">
+            <div class="acc-title">US News Best Global Universities</div>
+            <div class="acc-summary">Reputação em pesquisa, produção científica e impacto de citações</div>
+          </div>
+          <span class="acc-chevron">▼</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-block">
+              <h4>Sobre o ranking</h4>
+              <p>Publicado desde 2014 pela revista norte-americana U.S. News &amp; World Report, o Best Global
+                Universities avalia principalmente o desempenho em pesquisa das instituições, sem considerar indicadores
+                de ensino. A metodologia combina 13 indicadores de reputação e bibliometria, com dados fornecidos pela
+                Clarivate a partir da Web of Science e do InCites.</p>
+              <p>A edição 2026-2027 classifica 2.250 universidades de 105 países e é acompanhada de rankings regionais,
+                nacionais e de 51 áreas do conhecimento, cada uma com metodologia e pesos próprios.</p>
+            </div>
+            <div class="acc-block">
+              <h4>Desempenho da UFF</h4>
+              <p>Na edição 2026-2027, a UFF ficou em 20º lugar no Brasil, 15º entre as federais e 46º na América Latina.
+                O melhor resultado da universidade está no indicador de reputação regional, em que ocupa a 34ª posição.
+                A UFF é ranqueada em 9 das 51 áreas avaliadas, com destaque para Ciência de Alimentos e Tecnologia (6º
+                lugar no Brasil) e
+                Física (12º lugar no Brasil).</p>
+            </div>
+            <div class="acc-links">
+              <a class="acc-cta" id="cta-usnews" href="https://pgi-plan.github.io/rankings/usnews.html" target="_blank">
+                Acessar Dashboard US News →</a>
+              <a class="acc-site" href="https://www.usnews.com/education/best-global-universities" target="_blank"
+                rel="noopener">Site oficial do US News ↗</a>
             </div>
           </div>
         </div>
@@ -878,9 +1005,18 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>O CWTS Leiden Ranking é produzido pelo Centro de Estudos de Ciência e Tecnologia (CWTS) da Universidade de Leiden, na Holanda, e tem por objetivo prestar um serviço à comunidade científica, disponibilizando informações de alta qualidade sobre o desempenho científico das universidades e oferecendo uma alternativa a outros rankings universitários conhecidos, como o Times Higher Education World University Rankings e o QS World University Rankings.</p>
-              <p>O Leiden Ranking é baseado em dados bibliográficos sobre publicações científicas, especialmente em artigos publicados em revistas científicas. Atualmente, o Leiden Ranking utiliza o Web of Science como principal fonte de dados.</p>
-              <p>É importante destacar que o CWTS Leiden Ranking não considera o desempenho das universidades em termos de ensino. Portanto, o próprio ranking aconselha os estudantes a não o utilizarem para escolher onde estudar. O ranking é, na verdade, produzido para formuladores de políticas, gestores de pesquisa, pesquisadores, jornalistas e qualquer pessoa interessada no desempenho científico das universidades.</p>
+              <p>O CWTS Leiden Ranking é produzido pelo Centro de Estudos de Ciência e Tecnologia (CWTS) da Universidade
+                de Leiden, na Holanda, e tem por objetivo prestar um serviço à comunidade científica, disponibilizando
+                informações de alta qualidade sobre o desempenho científico das universidades e oferecendo uma
+                alternativa a outros rankings universitários conhecidos, como o Times Higher Education World University
+                Rankings e o QS World University Rankings.</p>
+              <p>O Leiden Ranking é baseado em dados bibliográficos sobre publicações científicas, especialmente em
+                artigos publicados em revistas científicas. Atualmente, o Leiden Ranking utiliza o Web of Science como
+                principal fonte de dados.</p>
+              <p>É importante destacar que o CWTS Leiden Ranking não considera o desempenho das universidades em termos
+                de ensino. Portanto, o próprio ranking aconselha os estudantes a não o utilizarem para escolher onde
+                estudar. O ranking é, na verdade, produzido para formuladores de políticas, gestores de pesquisa,
+                pesquisadores, jornalistas e qualquer pessoa interessada no desempenho científico das universidades.</p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
@@ -914,9 +1050,16 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>O Ranking Universitário Folha (RUF) é uma avaliação do ensino superior do Brasil realizada anualmente desde 2012, com uma pausa entre os anos de 2020 a 2022. O RUF é composto pelo ranking de universidades e pelo ranking de cursos.</p>
-              <p>No ranking de universidades, as instituições nacionais públicas e privadas são avaliadas com base em cinco indicadores: Ensino (nota de 0 a 32), Pesquisa (nota de 0 a 42, sendo 0 a 40 até 2019), Mercado (nota de 0 a 18) Inovação (nota de 0 a 4) e Internacionalização (nota de 0 a 4, sendo 0 a 6 até 2019).</p>
-              <p>Os dados que compõem os indicadores de avaliação são coletados em bases nacionais e internacionais de periódicos científicos, patentes, bases do INEP-MEC (Censo da Educação Superior e ENADE), agências de fomento à ciência e em pesquisas nacionais de opinião feitas pela DataFolha.</p>
+              <p>O Ranking Universitário Folha (RUF) é uma avaliação do ensino superior do Brasil realizada anualmente
+                desde 2012, com uma pausa entre os anos de 2020 a 2022. O RUF é composto pelo ranking de universidades e
+                pelo ranking de cursos.</p>
+              <p>No ranking de universidades, as instituições nacionais públicas e privadas são avaliadas com base em
+                cinco indicadores: Ensino (nota de 0 a 32), Pesquisa (nota de 0 a 42, sendo 0 a 40 até 2019), Mercado
+                (nota de 0 a 18) Inovação (nota de 0 a 4) e Internacionalização (nota de 0 a 4, sendo 0 a 6 até 2019).
+              </p>
+              <p>Os dados que compõem os indicadores de avaliação são coletados em bases nacionais e internacionais de
+                periódicos científicos, patentes, bases do INEP-MEC (Censo da Educação Superior e ENADE), agências de
+                fomento à ciência e em pesquisas nacionais de opinião feitas pela DataFolha.</p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
@@ -948,17 +1091,36 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>O UI GreenMetric Sustainable University Rankings (conhecido até 2025 como UI GreenMetric World University Rankings) é uma publicação anual de classificações universitárias sobre sustentabilidade. Desenvolvido em 2010 pela Universidade da Indonésia e sem fins lucrativos, o ranking classifica universidades de todo o mundo com base no seu compromisso e ações rumo à sustentabilidade, visando aumentar a conscientização universitária em relação ao tema.</p>
-              <p> ranking coleta dados por meio de um questionário online baseado em seis categorias com diferentes pesos para a pontuação final: ambiente e infraestrutura (11%), energia e mudança climática (20%), resíduos (17%), água (11%), transporte (17%), educação e pesquisa (13%) e governança e digitalização (11%). </p>
-              <p>Desde seu lançamento, o UI GreenMetric já passou por uma série de mudanças em sua metodologia, com adição de novos indicadores em cada uma das categorias e maior enfoque em temas como Objetivos de Desenvolvimento Sustentável (ODS) e ações das universidades em direção à sustentabilidade.</p>
+              <p>O UI GreenMetric Sustainable University Rankings (conhecido até 2025 como UI GreenMetric World
+                University Rankings) é uma publicação anual de classificações universitárias sobre sustentabilidade.
+                Desenvolvido em 2010 pela Universidade da Indonésia e sem fins lucrativos, o ranking classifica
+                universidades de todo o mundo com base no seu compromisso e ações rumo à sustentabilidade, visando
+                aumentar a conscientização universitária em relação ao tema.</p>
+              <p> ranking coleta dados por meio de um questionário online baseado em seis categorias com diferentes
+                pesos para a pontuação final: ambiente e infraestrutura (11%), energia e mudança climática (20%),
+                resíduos (17%), água (11%), transporte (17%), educação e pesquisa (13%) e governança e digitalização
+                (11%). </p>
+              <p>Desde seu lançamento, o UI GreenMetric já passou por uma série de mudanças em sua metodologia, com
+                adição de novos indicadores em cada uma das categorias e maior enfoque em temas como Objetivos de
+                Desenvolvimento Sustentável (ODS) e ações das universidades em direção à sustentabilidade.</p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
-              <p>No UI GreenMetric Sustainable University Rankings 2025, a UFF foi a 1ª universidade do Brasil e a 22ª do mundo no ranking de Transporte (TR). No ranking mundial, ocupou a 12ª colocação entre as universidades brasileiras e ficou classificada entre as 347 melhores do mundo. Além do ranking de Transporte, a UFF obteve destaque em Pesquisa (ED), classificando-se entre as 6 melhores do país, e em Energia e Mudança Climática (EC), com a 11ª posição nacional.</p>
-              <p>Uma vez que a classificação é influenciada pelo aumento contínuo de universidades participantes, é importante observar outro indicador: a pontuação da universidade. É possível perceber que a UFF vem melhorando progressivamente na maior parte das categorias do ranking: sua pontuação geral passou de 4100 (ou 41%), para 7533 (ou 75.33%) nos últimos sete anos, ao passo que, nas categorias de Educação e Pesquisa (ED), Energia e Mudança Climática (EC) e Transporte (TR), a universidade mais do que dobrou sua pontuação de 2018 a 2025.</p>
+              <p>No UI GreenMetric Sustainable University Rankings 2025, a UFF foi a 1ª universidade do Brasil e a 22ª
+                do mundo no ranking de Transporte (TR). No ranking mundial, ocupou a 12ª colocação entre as
+                universidades brasileiras e ficou classificada entre as 347 melhores do mundo. Além do ranking de
+                Transporte, a UFF obteve destaque em Pesquisa (ED), classificando-se entre as 6 melhores do país, e em
+                Energia e Mudança Climática (EC), com a 11ª posição nacional.</p>
+              <p>Uma vez que a classificação é influenciada pelo aumento contínuo de universidades participantes, é
+                importante observar outro indicador: a pontuação da universidade. É possível perceber que a UFF vem
+                melhorando progressivamente na maior parte das categorias do ranking: sua pontuação geral passou de 4100
+                (ou 41%), para 7533 (ou 75.33%) nos últimos sete anos, ao passo que, nas categorias de Educação e
+                Pesquisa (ED), Energia e Mudança Climática (EC) e Transporte (TR), a universidade mais do que dobrou sua
+                pontuação de 2018 a 2025.</p>
             </div>
             <div class="acc-links">
-              <a class="acc-cta" id="cta-green" href="https://pgi-plan.github.io/rankings/greenmetric.html" target="_blank">
+              <a class="acc-cta" id="cta-green" href="https://pgi-plan.github.io/rankings/greenmetric.html"
+                target="_blank">
                 Acessar Dashboard GreenMetric →</a>
               <a class="acc-site" href="https://uigreenmetric.com/" target="_blank" rel="noopener">Site oficial do UI
                 GreenMetric ↗</a>
@@ -981,12 +1143,21 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>O Round University Ranking (RUR) é um ranking universitário mundial que avalia o desempenho de mais 1.300 universidades líderes de 99 países por meio de 20 indicadores em 4 dimensões principais: ensino, pesquisa, diversidade internacional e sustentabilidade financeira.</p>
-              <p>Três tipos de dados brutos são usados no RUR: 1. Dados institucionais fornecidos diretamente pelas universidades via plataforma de coleta de dados; 2. Dados bibliométricos coletados por meio da plataforma The Lens, que refletem a produção científica indexada pelo número de publicações, citações e métricas relacionadas; 3. visibilidade online da universidade, no Google e em contas de redes sociais.</p>
+              <p>O Round University Ranking (RUR) é um ranking universitário mundial que avalia o desempenho de mais
+                1.300 universidades líderes de 99 países por meio de 20 indicadores em 4 dimensões principais: ensino,
+                pesquisa, diversidade internacional e sustentabilidade financeira.</p>
+              <p>Três tipos de dados brutos são usados no RUR: 1. Dados institucionais fornecidos diretamente pelas
+                universidades via plataforma de coleta de dados; 2. Dados bibliométricos coletados por meio da
+                plataforma The Lens, que refletem a produção científica indexada pelo número de publicações, citações e
+                métricas relacionadas; 3. visibilidade online da universidade, no Google e em contas de redes sociais.
+              </p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
-              <p>Em 2026, a UFF obteve destaque com a 3ª posição nacional no ranking de Diversidade Internacional do Round University Ranking. Entre as universidades federais brasileiras, ocupou a 6ª colocação no ranking mundial. Além disso, ficou classificada em 8º lugar no Brasil no ranking de Pesquisa e entre as 410 melhores do mundo no ranking de Ensino.</p>
+              <p>Em 2026, a UFF obteve destaque com a 3ª posição nacional no ranking de Diversidade Internacional do
+                Round University Ranking. Entre as universidades federais brasileiras, ocupou a 6ª colocação no ranking
+                mundial. Além disso, ficou classificada em 8º lugar no Brasil no ranking de Pesquisa e entre as 410
+                melhores do mundo no ranking de Ensino.</p>
             </div>
             <div class="acc-links">
               <a class="acc-cta" id="cta-rur" href="https://pgi-plan.github.io/rankings/rur.html" target="_blank">
@@ -1012,9 +1183,20 @@
           <div class="acc-body-inner">
             <div class="acc-block">
               <h4>Sobre o ranking</h4>
-              <p>O Webometrics Ranking Web of Universities surgiu em 2004 e é produzido pelo Cybermetrics Lab, um grupo de pesquisa vinculado ao Conselho Superior de Pesquisas Científicas (CSIC) da Espanha que desenvolve estudos quantitativos na web acadêmica desde meados da década de noventa. Ao contrário dos rankings tradicionais focados em pesquisa, o Webometrics avalia as universidades com base em sua presença digital, influência acadêmica, abertura e visibilidade global.</p>
-              <p>O ranking é constituído a partir de dados disponíveis publicamente na web, que combinam as variáveis num indicador composto e com uma cobertura global. Atualmente, são avaliadas mais de 32 mil instituições de mais de 200 países. O objetivo principal do Webometrics Ranking é promover a presença acadêmica na web, apoiando as iniciativas de acesso aberto para aumentar significativamente a transferência do conhecimento científico e cultural gerado pelas universidades para toda a sociedade.</p>
-              <p>Os indicadores utilizados para classificação do Ranking Web são: visibilidade (número de domínios externos ligados às páginas web da instituição), com peso de 50%; transparência (citações de pesquisadores nos perfis do Google Scholar), com peso de 10%; e excelência (artigos de pesquisa entre os 10% mais citados), com peso de 40%.</p>
+              <p>O Webometrics Ranking Web of Universities surgiu em 2004 e é produzido pelo Cybermetrics Lab, um grupo
+                de pesquisa vinculado ao Conselho Superior de Pesquisas Científicas (CSIC) da Espanha que desenvolve
+                estudos quantitativos na web acadêmica desde meados da década de noventa. Ao contrário dos rankings
+                tradicionais focados em pesquisa, o Webometrics avalia as universidades com base em sua presença
+                digital, influência acadêmica, abertura e visibilidade global.</p>
+              <p>O ranking é constituído a partir de dados disponíveis publicamente na web, que combinam as variáveis
+                num indicador composto e com uma cobertura global. Atualmente, são avaliadas mais de 32 mil instituições
+                de mais de 200 países. O objetivo principal do Webometrics Ranking é promover a presença acadêmica na
+                web, apoiando as iniciativas de acesso aberto para aumentar significativamente a transferência do
+                conhecimento científico e cultural gerado pelas universidades para toda a sociedade.</p>
+              <p>Os indicadores utilizados para classificação do Ranking Web são: visibilidade (número de domínios
+                externos ligados às páginas web da instituição), com peso de 50%; transparência (citações de
+                pesquisadores nos perfis do Google Scholar), com peso de 10%; e excelência (artigos de pesquisa entre os
+                10% mais citados), com peso de 40%.</p>
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
@@ -1023,7 +1205,8 @@
                 melhores federais do Brasil.</p>
             </div>
             <div class="acc-links">
-              <a class="acc-cta" id="cta-web" href="https://pgi-plan.github.io/rankings/webometrics.html" target="_blank">
+              <a class="acc-cta" id="cta-web" href="https://pgi-plan.github.io/rankings/webometrics.html"
+                target="_blank">
                 Acessar Dashboard Webometrics →</a>
               <a class="acc-site" href="https://www.webometrics.org/" target="_blank" rel="noopener">Site oficial do
                 Webometrics ↗</a>
@@ -1054,11 +1237,15 @@
             </div>
             <div class="acc-block">
               <h4>Desempenho da UFF</h4>
-              <p>No último resultado divulgado pelo SIR, em 2026, a UFF destacou-se em Odontologia, alcançando a 13ª posição na América Latina. A universidade obteve ainda destaque na área de Artes e Humanidades, ocupando a 12ª colocação no Brasil e a 28ª na América Latina.</p>
-              <p>Na classificação geral, a UFF ficou em 10º lugar entre as federais brasileiras e em 29º na América Latina, com 171 e 454 universidades ranqueadas, respectivamente.</p>
+              <p>No último resultado divulgado pelo SIR, em 2026, a UFF destacou-se em Odontologia, alcançando a 13ª
+                posição na América Latina. A universidade obteve ainda destaque na área de Artes e Humanidades, ocupando
+                a 12ª colocação no Brasil e a 28ª na América Latina.</p>
+              <p>Na classificação geral, a UFF ficou em 10º lugar entre as federais brasileiras e em 29º na América
+                Latina, com 171 e 454 universidades ranqueadas, respectivamente.</p>
             </div>
             <div class="acc-links">
-              <a class="acc-cta" id="cta-scimago" href="https://pgi-plan.github.io/rankings/scimago.html" target="_blank">
+              <a class="acc-cta" id="cta-scimago" href="https://pgi-plan.github.io/rankings/scimago.html"
+                target="_blank">
                 Acessar Dashboard SCImago →</a>
               <a class="acc-site" href="https://www.scimagoir.com" target="_blank" rel="noopener">Site oficial do
                 SCImago

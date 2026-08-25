@@ -211,13 +211,24 @@
       height: 100%;
     }
 
+    /* Cabeçalho comum a todos os gráficos: mantém a mesma altura mesmo
+       quando há controles à direita, para as áreas de plotagem alinharem. */
+    .chart-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
     .chart-title {
       font-size: 1.1rem;
       font-weight: 600;
       color: #1f2937;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 0;
     }
 
     .chart-tabs {
@@ -242,6 +253,20 @@
       color: #6b7280;
       transition: var(--transition);
       text-align: center;
+    }
+
+    .chart-toggle {
+      display: inline-flex;
+      flex-shrink: 0;
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .chart-toggle .tab-btn {
+      flex: 0 0 auto;
+      min-width: 88px;
     }
 
     .tab-btn:hover {
@@ -405,14 +430,22 @@
 
       <div class="col-lg-6 mb-3">
         <div class="chart-container">
-          <h4 class="chart-title">Posição por área</h4>
+          <div class="chart-head">
+            <h4 class="chart-title">Posição por área</h4>
+            <div class="chart-toggle" id="escopo-toggle">
+              <button class="tab-btn active" data-escopo="mundo">Mundo</button>
+              <button class="tab-btn" data-escopo="brasil">Brasil</button>
+            </div>
+          </div>
           <div id="areas-rank-chart"></div>
         </div>
       </div>
 
       <div class="col-lg-6 mb-3">
         <div class="chart-container">
-          <h4 class="chart-title">Pontuação por área</h4>
+          <div class="chart-head">
+            <h4 class="chart-title">Pontuação por área (mundo)</h4>
+          </div>
           <div id="areas-score-chart"></div>
         </div>
       </div>
@@ -430,14 +463,18 @@
 
       <div class="col-12 mb-3">
         <div class="chart-container">
-          <h4 class="chart-title">Posição em cada indicador</h4>
+          <div class="chart-head">
+            <h4 class="chart-title">Posição em cada indicador</h4>
+          </div>
           <div id="indicators-chart"></div>
         </div>
       </div>
 
       <div class="col-12 mb-3">
         <div class="chart-container">
-          <h4 class="chart-title">Publicações e impacto</h4>
+          <div class="chart-head">
+            <h4 class="chart-title">Publicações e impacto</h4>
+          </div>
           <div id="gap-chart"></div>
         </div>
       </div>
@@ -447,7 +484,9 @@
     <div class="row mb-4">
       <div class="col-12">
         <div class="chart-container">
-          <h4 class="chart-title">Indicadores por área</h4>
+          <div class="chart-head">
+            <h4 class="chart-title">Indicadores por área</h4>
+          </div>
           <div class="chart-tabs mb-3" id="area-tabs"></div>
           <div id="area-detail-chart"></div>
         </div>
@@ -479,39 +518,39 @@
 
     const areas = [
       {
-        nome: 'Ciência de Alimentos', pos: 234, score: 24.8,
+        nome: 'Ciência de Alimentos', pos: 234, posBR: 6, score: 24.8,
         ind: { repRegional: null, repGlobal: null, pub: 197, citacoes: 206, impacto: 192, top10: 174, top1: 122, colabInt: 249 }
       },
       {
-        nome: 'Ciências Agrárias', pos: 396, score: 28.6,
+        nome: 'Ciências Agrárias', pos: 396, posBR: 13, score: 28.6,
         ind: { repRegional: 29, repGlobal: 270, pub: 264, citacoes: 302, impacto: 375, top10: 315, top1: 243, colabInt: 441 }
       },
       {
-        nome: 'Ciências Vegetais e Animais', pos: 687, score: 23.3,
+        nome: 'Ciências Vegetais e Animais', pos: 687, posBR: 32, score: 23.3,
         ind: { repRegional: 16, repGlobal: 256, pub: 431, citacoes: 643, impacto: 708, top10: 759, top1: 746, colabInt: 655 }
       },
       {
-        nome: 'Física', pos: 814, score: 26.1,
+        nome: 'Física', pos: 814, posBR: 12, score: 26.1,
         ind: { repRegional: 20, repGlobal: 380, pub: 538, citacoes: 750, impacto: 938, top10: 956, top1: 932, colabInt: 696 }
       },
       {
-        nome: 'Ambientais/Ecologia', pos: 820, score: 27.8,
+        nome: 'Ambientais/Ecologia', pos: 820, posBR: 21, score: 27.8,
         ind: { repRegional: 25, repGlobal: 281, pub: 601, citacoes: 736, impacto: 896, top10: 919, top1: 962, colabInt: 674 }
       },
       {
-        nome: 'Ciência da Computação', pos: 945, score: 16.3,
+        nome: 'Ciência da Computação', pos: 945, posBR: 13, score: 16.3,
         ind: { repRegional: 14, repGlobal: 496, pub: 803, citacoes: 1032, impacto: 1056, top10: 1052, top1: 993, colabInt: 665 }
       },
       {
-        nome: 'Medicina Clínica', pos: 1128, score: 24.1,
+        nome: 'Medicina Clínica', pos: 1128, posBR: 26, score: 24.1,
         ind: { repRegional: 35, repGlobal: 697, pub: 736, citacoes: 1107, impacto: 1353, top10: 1361, top1: 1274, colabInt: 774 }
       },
       {
-        nome: 'Química', pos: 1410, score: 25.6,
+        nome: 'Química', pos: 1410, posBR: 23, score: 25.6,
         ind: { repRegional: 43, repGlobal: 569, pub: 746, citacoes: 1107, impacto: 1557, top10: 1568, top1: 1491, colabInt: 1049 }
       },
       {
-        nome: 'Engenharia', pos: 1474, score: 17.2,
+        nome: 'Engenharia', pos: 1474, posBR: 19, score: 17.2,
         ind: { repRegional: 43, repGlobal: 876, pub: 908, citacoes: 1314, impacto: 1569, top10: 1545, top1: 1418, colabInt: 1075 }
       }
     ];
@@ -542,6 +581,10 @@
     const chartConfig = { responsive: true, displayModeBar: false, displaylogo: false };
 
     const isMobile = () => window.innerWidth < 768;
+    // Abaixo de 1200px os três gráficos de área dividem a linha em colunas
+    // estreitas, então usam os mesmos rótulos curtos do celular.
+    const isCompacto = () => window.innerWidth < 1200;
+    const modo = () => isMobile() ? 'mobile' : (isCompacto() ? 'compacto' : 'amplo');
     const fmt = n => n.toLocaleString('pt-BR');
 
     // Rótulos curtos usados apenas em telas estreitas
@@ -569,6 +612,7 @@
     };
 
     const rot = t => (isMobile() && curto[t]) ? curto[t] : t;
+    const rotArea = t => (isCompacto() && curto[t]) ? curto[t] : t;
 
     // Layout base sensível ao tamanho da tela
     function baseLayout() {
@@ -619,32 +663,62 @@
 
     const valorFont = cor => ({ size: isMobile() ? 9 : 11, color: cor, family: 'Inter, sans-serif' });
 
+    // Escopo do gráfico de posição por área: 'mundo' ou 'brasil'
+    let escopoAreas = 'mundo';
+
+    const escopos = {
+      mundo: {
+        campo: 'pos', cor: colors.teal, corTexto: '#0e7490',
+        titulo: 'Posição no mundo na área', hover: 'Posição no mundo',
+        range: m => [0, m ? 1900 : 1750]
+      },
+      brasil: {
+        campo: 'posBR', cor: colors.purple, corTexto: '#6d28d9',
+        titulo: 'Posição no Brasil na área', hover: 'Posição no Brasil',
+        range: () => [0, 38]
+      }
+    };
+
     function createAreasRankChart() {
       const m = isMobile();
-      const ord = [...areas].sort((a, b) => b.pos - a.pos);
+      const e = escopos[escopoAreas];
+      const ord = [...areas].sort((a, b) => b[e.campo] - a[e.campo]);
       const trace = {
-        x: ord.map(a => a.pos), y: ord.map(a => rot(a.nome)),
+        x: ord.map(a => a[e.campo]), y: ord.map(a => rotArea(a.nome)),
         type: 'bar', orientation: 'h',
-        marker: { color: colors.teal, opacity: 0.85 },
-        text: ord.map(a => fmt(a.pos) + 'º'),
+        marker: { color: e.cor, opacity: 0.85 },
+        text: ord.map(a => fmt(a[e.campo]) + 'º'),
         textposition: 'outside',
-        textfont: valorFont('#0e7490'),
+        textfont: valorFont(e.corTexto),
         cliponaxis: false,
-        hovertemplate: '<b>%{y}</b><br>Posição: %{x}º<extra></extra>'
+        hovertemplate: '<b>%{y}</b><br>' + e.hover + ': %{x}º<extra></extra>'
       };
       const layout = {
         ...baseLayout(),
         height: m ? 380 : 400,
-        xaxis: { ...baseLayout().xaxis, title: 'Posição na área', range: [0, m ? 1900 : 1750] }
+        xaxis: { ...baseLayout().xaxis, title: e.titulo, range: e.range(m) }
       };
       Plotly.newPlot('areas-rank-chart', [trace], layout, chartConfig);
+    }
+
+    function buildEscopoToggle() {
+      const wrap = document.getElementById('escopo-toggle');
+      wrap.querySelectorAll('.tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.dataset.escopo === escopoAreas) return;
+          wrap.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          escopoAreas = btn.dataset.escopo;
+          createAreasRankChart();
+        });
+      });
     }
 
     function createAreasScoreChart() {
       const m = isMobile();
       const ord = [...areas].sort((a, b) => a.score - b.score);
       const trace = {
-        x: ord.map(a => a.score), y: ord.map(a => rot(a.nome)),
+        x: ord.map(a => a.score), y: ord.map(a => rotArea(a.nome)),
         type: 'bar', orientation: 'h',
         marker: { color: colors.green, opacity: 0.85 },
         text: ord.map(a => a.score.toFixed(1).replace('.', ',')),
@@ -807,21 +881,22 @@
     }
 
     // Redesenha ao cruzar o ponto de quebra (rótulos e legenda mudam de forma)
-    let larguraMobile = null;
+    let modoAtual = null;
     let resizeTimer = null;
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
-        if (isMobile() !== larguraMobile) {
-          larguraMobile = isMobile();
+        if (modo() !== modoAtual) {
+          modoAtual = modo();
           renderAll();
         }
       }, 200);
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-      larguraMobile = isMobile();
+      modoAtual = modo();
       buildAreaTabs();
+      buildEscopoToggle();
       renderAll();
     });
   </script>
