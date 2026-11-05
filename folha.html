@@ -407,8 +407,8 @@
               <i class="fas fa-flag"></i>
             </div>
             <h5 class="card-title">Posição no Brasil</h5>
-            <div class="indicator-value">15º</div>
-            <p class="card-subtitle">2025 - RUF</p>
+            <div class="indicator-value">16º</div>
+            <p class="card-subtitle">2026 - RUF</p>
           </div>
         </div>
       </div>
@@ -421,8 +421,8 @@
               <i class="fas fa-graduation-cap"></i>
             </div>
             <h5 class="card-title">Posição em Ensino</h5>
-            <div class="indicator-value">12º</div>
-            <p class="card-subtitle">2025 - RUF</p>
+            <div class="indicator-value">13º</div>
+            <p class="card-subtitle">2026 - RUF</p>
           </div>
         </div>
       </div>
@@ -435,8 +435,8 @@
               <i class="fas fa-university"></i>
             </div>
             <h5 class="card-title">Entre as Federais</h5>
-            <div class="indicator-value">12º</div>
-            <p class="card-subtitle">2025 - RUF</p>
+            <div class="indicator-value">13º</div>
+            <p class="card-subtitle">2026 - RUF</p>
           </div>
         </div>
       </div>
@@ -448,8 +448,8 @@
             <div class="card-icon">
               <i class="fas fa-star"></i>
             </div>
-            <h5 class="card-title">Pontuação Geral (2025)</h5>
-            <div class="indicator-value">87.8</div>
+            <h5 class="card-title">Pontuação Geral (2026)</h5>
+            <div class="indicator-value">87.45</div>
             <p class="card-subtitle">De 100 pontos possíveis</p>
           </div>
         </div>
@@ -594,7 +594,7 @@
           </div>
         </div>
       </div>
-    </div> 
+    </div>
 
     <!-- Gráficos de Pontuação -->
     <div class="row mb-4">
@@ -648,31 +648,31 @@
     // Dados do RUF (extraídos do Excel)
     const data = {
       // Anos disponíveis (com lacunas 2020-2022)
-      years: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2023, 2024, 2025],
+      years: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2023, 2024, 2025, 2026],
 
       // Classificação no Brasil (Geral)
-      brazilPosition: [18, 16, 13, 14, 16, 16, 17, 13, 17, 15],
+      brazilPosition: [18, 16, 13, 14, 16, 16, 17, 13, 17, 15, 16],
 
       // Classificação entre as Federais
-      federaisPosition: [10, 13, 10, 10, 12, 12, 13, 10, 14, 12],
+      federaisPosition: [10, 13, 10, 10, 12, 12, 13, 10, 14, 12, 13],
 
       // Classificação por indicadores
-      ensinoPosition: [26, 18, 17, 16, 15, 14, 13, 14, 11, 12],
-      pesquisaPosition: [20, 22, 18, 22, 24, 27, 27, 28, 29, 27],
-      mercadoPosition: [26, 22, 14, 17, 19, 18, 17, 16, 19, 20],
-      inovacaoPosition: [26, 24, 24, 29, 31, 26, 22, 25, 26, 23],
-      internacionalizacaoPosition: [9, 23, 18, 26, 24, 26, 28, 42, 44, 21],
+      ensinoPosition: [26, 18, 17, 16, 15, 14, 13, 14, 11, 12, 13],
+      pesquisaPosition: [20, 22, 18, 22, 24, 27, 27, 28, 29, 27, 25],
+      mercadoPosition: [26, 22, 14, 17, 19, 18, 17, 16, 19, 20, 22],
+      inovacaoPosition: [26, 24, 24, 29, 31, 26, 22, 25, 26, 23, 24],
+      internacionalizacaoPosition: [9, 23, 18, 26, 24, 26, 28, 42, 44, 21, 26],
 
       // Pontuação
-      overallScore: [83.49, 85.9, 86.8, 86.94, 86.37, 85.89, 86.66, 87.51, 87.19, 87.79],
-      ensinoScore: [24.68, 27.65, 26.79, 28.12, 28.28, 28.28, 28.63, 29.59, 29.82, 29.57],
-      pesquisaScore: [35.07, 35.84, 36.77, 36.04, 35.52, 35.04, 35.32, 35.14, 35.07, 35.57],
-      mercadoScore: [15.55, 15.95, 16.67, 16.46, 16.27, 16.39, 16.5, 16.63, 16.38, 16.27],
-      inovacaoScore: [3.0, 3.17, 3.25, 3.13, 3.09, 2.92, 3.01, 3.1, 2.87, 3.09],
-      internacionalizacaoScore: [5.19, 3.29, 3.32, 3.19, 3.21, 3.26, 3.2, 3.05, 3.05, 3.29],
+      overallScore: [83.49, 85.9, 86.8, 86.94, 86.37, 85.89, 86.66, 87.51, 87.19, 87.79, 87.45],
+      ensinoScore: [24.68, 27.65, 26.79, 28.12, 28.28, 28.28, 28.63, 29.59, 29.82, 29.57, 29.19],
+      pesquisaScore: [35.07, 35.84, 36.77, 36.04, 35.52, 35.04, 35.32, 35.14, 35.07, 35.57, 35.79],
+      mercadoScore: [15.55, 15.95, 16.67, 16.46, 16.27, 16.39, 16.5, 16.63, 16.38, 16.27, 16.15],
+      inovacaoScore: [3.0, 3.17, 3.25, 3.13, 3.09, 2.92, 3.01, 3.1, 2.87, 3.09, 3.09],
+      internacionalizacaoScore: [5.19, 3.29, 3.32, 3.19, 3.21, 3.26, 3.2, 3.05, 3.05, 3.29, 3.23],
 
       // Número de universidades participantes
-      participants: [192, 192, 192, 195, 195, 196, 197, 203, 203, 204]
+      participants: [192, 192, 192, 195, 195, 196, 197, 203, 203, 204, 205]
     };
 
     // Cores para gráficos
