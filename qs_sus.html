@@ -802,7 +802,9 @@
       const labels = data.indicators.map(rowLabel);
       const m = isMobile();
 
-      const traces = cols.map((col, c) => ({
+      // Edição mais recente primeiro (2027, 2026, 2025, 2024); a cor continua presa ao ano
+      const order = cols.map((_, c) => c).reverse();
+      const traces = order.map(c => { const col = cols[c]; return {
         type: 'bar', orientation: 'h',
         name: col,
         y: labels,
@@ -814,7 +816,7 @@
         cliponaxis: false,
         customdata: data.indicators.map(i => [i.pt, i.en, (R[i.key][c] === null || R[i.key][c] === undefined) ? 'sem dado' : ord(R[i.key][c]), fmtInt(N[c])]),
         hovertemplate: `<b>%{customdata[0]}</b> (%{customdata[1]})<br>${col}: <b>%{customdata[2]}</b> de %{customdata[3]}<extra></extra>`
-      }));
+      }; });
 
       const maxV = Math.max(...data.indicators.flatMap(i => R[i.key].map(rankNum)).filter(v => v !== null));
       Plotly.newPlot('chart-bars', traces, baseLayout({
