@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UFF no QS Sustainability | Dashboard</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Plotly JS -->
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --light-bg: #f4f8f5;
+      --card-shadow: 0 4px 12px rgba(20, 83, 45, 0.08);
+      --border-radius: 10px;
+      --transition: all 0.3s ease;
+      --forest: #14532d;
+      --green: #15803d;
+      --leaf: #22c55e;
+      --ink: #1f2937;
+      --muted: #6b7280;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--ink);
+      line-height: 1.5;
+      padding-top: 20px;
+      padding-bottom: 40px;
+    }
+
+    .container { max-width: 1400px; }
+
+    /* Header */
+    .dashboard-header {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #14532d 0%, #166534 45%, #16a34a 100%);
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+      padding: 30px;
+      color: white;
+    }
+
+    .dashboard-header::after {
+      /* folha decorativa, discreta */
+      content: "\f06c";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      right: -20px;
+      bottom: -60px;
+      font-size: 220px;
+      color: rgba(255, 255, 255, 0.07);
+      transform: rotate(-20deg);
+      pointer-events: none;
+    }
+
+    .dashboard-header h1 { font-weight: 700; font-size: 2.2rem; margin-bottom: 0; }
+
+    .header-badge {
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      white-space: nowrap;
+    }
+
+    /* Cards */
+    .indicator-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      height: 100%;
+      overflow: hidden;
+      border-top: 4px solid var(--c);
+    }
+
+    .indicator-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(20, 83, 45, 0.15); }
+    .indicator-card .card-body { padding: 18px 14px; }
+    .indicator-card .card-icon { font-size: 1.6rem; margin-bottom: 10px; color: var(--c); opacity: 0.9; }
+    .indicator-card .indicator-value { color: var(--c); }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      min-height: 2.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .indicator-value { font-size: 2.1rem; font-weight: 700; margin-bottom: 2px; line-height: 1.1; }
+    .card-subtitle { font-size: 0.82rem; color: #9ca3af; margin-bottom: 0; }
+
+
+    /* Section headers */
+    .section-header {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--green);
+    }
+
+    .section-title { font-weight: 700; font-size: 1.35rem; margin-bottom: 0; display: flex; align-items: center; }
+    .section-icon { margin-right: 10px; font-size: 1.4rem; color: var(--green); }
+
+    /* Charts */
+    .chart-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 20px;
+      height: 100%;
+    }
+
+    .chart-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5efe8;
+    }
+
+
+    /* Tabs */
+    .chart-tabs {
+      background: #f3f8f4;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--muted);
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .tab-btn:hover { background: #e2efe5; color: #374151; }
+    .tab-btn.active { background: white; color: var(--green); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }
+    .tab-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
+
+    /* Mini gráficos por indicador */
+    .mini-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 18px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .mini-key { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card {
+      border: 1px solid #e5efe8;
+      border-radius: 8px;
+      padding: 10px 6px 2px;
+      min-width: 0;
+    }
+
+    .mini-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #374151;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-title.main { font-weight: 700; }
+
+    @media (max-width: 992px) { .mini-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 768px) { .mini-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .mini-title { font-size: 0.75rem; } }
+
+    /* Footer */
+    .footer-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #dfe9e2;
+    }
+
+    .footer-note a { color: var(--green); text-decoration: none; }
+
+    @media (max-width: 992px) {
+      .dashboard-header { padding: 25px; }
+      .dashboard-header h1 { font-size: 1.8rem; }
+      .indicator-value { font-size: 1.8rem; }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header h1 { font-size: 1.5rem; }
+      .section-title { font-size: 1.15rem; }
+      .chart-container { padding: 14px; }
+      .tab-btn { min-width: 0; padding: 8px 6px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-9">
+          <h1><i class="fas fa-leaf me-2"></i>UFF no QS Sustainability Rankings</h1>
+        </div>
+        <div class="col-lg-3 text-lg-end">
+          <span class="header-badge" id="header-badge"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. Destaques -->
+    <div class="row mb-4">
+      <div class="col-12 mb-3">
+        <div class="section-header">
+          <h2 class="section-title"><i class="fas fa-seedling section-icon"></i>Destaques da edição <span
+              class="ms-1 js-last-year"></span></h2>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="row g-3" id="kpi-cards"></div>
+      </div>
+    </div>
+
+    <!-- 2. Evolução da posição -->
+    <div class="row mb-4 g-3">
+      <div class="col-12">
+        <div class="section-header mb-0">
+          <h2 class="section-title"><i class="fas fa-chart-line section-icon"></i>Evolução da posição</h2>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="chart-container">
+          <h4 class="chart-title">Posição mundial</h4>
+          <div id="chart-world"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="chart-container">
+          <h4 class="chart-title">Entre os X% melhores: posição relativa ao nº de participantes</h4>
+          <div id="chart-percentile"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="chart-container">
+          <h4 class="chart-title">Posição no Brasil e entre as federais</h4>
+          <div id="chart-brazil"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="chart-container">
+          <h4 class="chart-title">Posição nas Américas</h4>
+          <div id="chart-americas"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Pontuação -->
+    <div class="row mb-4 g-3">
+      <div class="col-12">
+        <div class="section-header mb-0">
+          <h2 class="section-title"><i class="fas fa-leaf section-icon"></i>Pontuação por categoria</h2>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="chart-container">
+          <h4 class="chart-title">Perfil de sustentabilidade por indicador</h4>
+          <div id="chart-radar"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="chart-container">
+          <h4 class="chart-title">Evolução da pontuação</h4>
+          <div class="chart-tabs" data-group="scores">
+            <button type="button" class="tab-btn active" data-tab="indicadores">Indicadores</button>
+            <button type="button" class="tab-btn" data-tab="ambiental">Ambiental</button>
+            <button type="button" class="tab-btn" data-tab="social">Social</button>
+          </div>
+          <div id="chart-scores"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Classificação por indicador -->
+    <div class="row mb-4 g-3">
+      <div class="col-12">
+        <div class="section-header mb-0">
+          <h2 class="section-title"><i class="fas fa-ranking-star section-icon"></i>Classificação por indicador</h2>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="chart-container">
+          <h4 class="chart-title">Posição por indicador ao longo das edições</h4>
+          <div class="chart-tabs" data-group="minis">
+            <button type="button" class="tab-btn active" data-tab="world">Mundo</button>
+            <button type="button" class="tab-btn" data-tab="americas">Américas</button>
+            <button type="button" class="tab-btn" data-tab="regional">Regional</button>
+            <button type="button" class="tab-btn" data-tab="brazil">Brasil</button>
+          </div>
+          <div class="mini-legend" id="mini-legend"></div>
+          <div class="mini-grid" id="mini-grid"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-note">
+      <p class="mb-2">
+        <i class="fas fa-database me-1"></i>
+        Dados extraídos do QS Sustainability Rankings (<span id="footer-years"></span>)
+      </p>
+      <p class="mb-0">
+        <i class="fa-solid fa-arrow-trend-up me-1"></i>
+        <a href="https://www.uff.br/proplan/uff-em-numeros/" target="_blank">Desenvolvido pela PGI/PLAN - UFF</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // DADOS — QS Sustainability Rankings (fonte: planilha PGI/PLAN 17/11/26)
+    // Para atualizar: acrescente o novo ano em `years` e um valor ao fim de
+    // cada série. Faixas abertas (ex.: "1251+") entram como texto.
+    // =====================================================================
+    const data = {
+      years: [2024, 2025, 2026, 2027],
+
+      // Posição geral e nº de participantes
+      position: {
+        world:    [627, 595, 548, 471],
+        americas: [152, 146, 131, 108],
+        brazil:   [9, 9, 8, 7],
+        federais: [6, 6, 6, 5]
+      },
+      participants: {
+        world:    [1397, 1744, 2002, 2004],
+        americas: [341, 409, 423, 399],
+        brazil:   [34, 42, 37, 36]
+      },
+
+      // Recorte regional: a planilha traz América do Sul em 2025-2026 e
+      // América Latina e Caribe em 2027 (recortes diferentes, não comparar direto)
+      regional: {
+        years:  [2025, 2026, 2027],
+        labels: ['2025<br>Am. do Sul', '2026<br>Am. do Sul', '2027<br>AL e Caribe'],
+        names:  ['América do Sul', 'América do Sul', 'América Latina e Caribe'],
+        n:      [111, 115, 146]
+      },
+
+      // Indicadores: chave, rótulo PT, nome oficial QS, grupo
+      indicators: [
+        { key: 'overall',    pt: 'Geral',                          en: 'Overall',                         lens: 'overall' },
+        { key: 'envImpact',  pt: 'Impacto Ambiental',              en: 'Environmental Impact',            lens: 'env', pillar: true },
+        { key: 'envSust',    short: 'Sustentab. Ambiental', pt: 'Sustentabilidade Ambiental',     en: 'Environmental Sustainability',    lens: 'env' },
+        { key: 'envEdu',     pt: 'Educação Ambiental',             en: 'Environmental Education',         lens: 'env' },
+        { key: 'envRes',     pt: 'Pesquisa Ambiental',             en: 'Environmental Research',          lens: 'env' },
+        { key: 'socImpact',  pt: 'Impacto Social',                 en: 'Social Impact',                   lens: 'soc', pillar: true },
+        { key: 'ke',         short: 'Troca de Conhec.', pt: 'Troca de Conhecimento',          en: 'Knowledge Exchange',              lens: 'soc' },
+        { key: 'equality',   pt: 'Equidade',                       en: 'Equality',                        lens: 'soc' },
+        { key: 'health',     pt: 'Saúde e Bem-estar',              en: 'Health & Wellbeing',              lens: 'soc' },
+        { key: 'impactEdu',  pt: 'Impacto da Educação',            en: 'Impact of Education',             lens: 'soc' },
+        { key: 'employ',     short: 'Empregabilidade', pt: 'Empregabilidade e Oportunidades', en: 'Employability and Opportunities', lens: 'soc' },
+        { key: 'governance', pt: 'Governança',                     en: 'Governance',                      lens: 'gov', pillar: true }
+      ],
+
+      // Pontuação (0-100), por ano
+      scores: {
+        overall:    [53.0, 57.3, 66.9, 72.9],
+        envImpact:  [44.2, 49.5, 60.7, 72.2],
+        envSust:    [32.2, 36.4, 50.5, 72.1],
+        envEdu:     [42.5, 41.4, 57.4, 66.7],
+        envRes:     [58.2, 74.1, 75.6, 77.9],
+        socImpact:  [58.4, 59.1, 66.5, 69.1],
+        ke:         [73.1, 76.6, 85.1, 92.0],
+        equality:   [65.2, 56.2, 72.5, 75.6],
+        health:     [61.8, 69.5, 72.8, 73.2],
+        impactEdu:  [51.2, 58.5, 61.1, 56.9],
+        employ:     [42.0, 43.5, 45.2, 45.9],
+        governance: [65.8, 79.0, 92.0, 91.9]
+      },
+
+      // Classificação por indicador (posição), por ano
+      rankWorld: {
+        overall:    [627, 595, 548, 471],
+        envImpact:  [678, 609, 544, 347],
+        envSust:    [695, 824, 502, 227],
+        envEdu:     [770, 827, 742, 575],
+        envRes:     [988, 568, 709, 693],
+        socImpact:  [716, 740, 737, 802],
+        ke:         [440, 473, 385, 221],
+        equality:   [563, 956, 610, 734],
+        health:     [871, 671, 798, 854],
+        impactEdu:  [977, 791, 970, 1175],
+        employ:     ['1001+', '1001+', '1251+', '1251+'],
+        governance: [613, 451, 183, 232]
+      },
+      rankAmericas: {
+        overall:    [152, 146, 131, 108],
+        envImpact:  [null, 153, 129, 86],
+        envSust:    [null, 157, 93, 47],
+        envEdu:     [null, 220, 187, 155],
+        envRes:     [null, 152, 171, 148],
+        socImpact:  [null, 190, 183, 181],
+        ke:         [null, 101, 91, 48],
+        equality:   [null, 294, 143, 158],
+        health:     [null, 191, 197, 201],
+        impactEdu:  [null, 228, 250, 240],
+        employ:     [null, 248, 285, 254],
+        governance: [null, 71, 36, 44]
+      },
+      rankBrazil: {
+        overall:    [9, 9, 8, 7],
+        envImpact:  [null, 12, 7, 6],
+        envSust:    [null, 7, 4, 4],
+        envEdu:     [null, 21, 16, 12],
+        envRes:     [null, 6, 7, 7],
+        socImpact:  [null, 10, 9, 10],
+        ke:         [null, 9, 7, 9],
+        equality:   [null, 13, 8, 7],
+        health:     [null, 12, 18, 18],
+        impactEdu:  [null, 6, 5, 8],
+        employ:     [null, 11, 12, 11],
+        governance: [null, 10, 7, 8]
+      },
+      // Anos de data.regional.years (2025-26 Am. do Sul; 2027 AL e Caribe)
+      rankRegional: {
+        overall:    [19, 17, 13],
+        envImpact:  [23, 16, 10],
+        envSust:    [23, 10, 5],
+        envEdu:     [53, 43, 39],
+        envRes:     [11, 13, 15],
+        socImpact:  [24, 23, 28],
+        ke:         [18, 14, 14],
+        equality:   [43, 21, 33],
+        health:     [22, 33, 36],
+        impactEdu:  [22, 22, 41],
+        employ:     [27, 37, 43],
+        governance: [18, 8, 11]
+      }
+    };
+
+    // =====================================================================
+    // CORES — tons de natureza (paleta validada para daltonismo)
+    // =====================================================================
+    const colors = {
+      world:    '#166534', // floresta
+      americas: '#0369A1', // água
+      regional: '#B45309', // terra
+      brazil:   '#65A30D', // folha
+      federais: '#9D174D', // fruto
+      overall:  '#374151',
+      env:      '#166534',
+      soc:      '#B45309',
+      gov:      '#0369A1',
+      muted:    '#9CA3AF',
+      grid:     'rgba(20, 83, 45, 0.06)',
+      axis:     'rgba(0, 0, 0, 0.12)',
+      tick:     '#6b7280'
+    };
+    const yearRamp = ['#B7D7C0', '#7FBF92', '#2F9E5B', '#14532D']; // anos antigos → recente
+    
+    const chartConfig = { responsive: true, displayModeBar: false, displaylogo: false };
+
+    // =====================================================================
+    // AUXILIARES
+    // =====================================================================
+    const Y = data.years;
+    const LAST = Y.length - 1;
+    const lastYear = Y[LAST];
+    const ind = Object.fromEntries(data.indicators.map(i => [i.key, i]));
+
+    const fmtInt = v => Number(v).toLocaleString('pt-BR');
+    const fmt1 = v => Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const ord = v => (typeof v === 'string') ? v : fmtInt(v) + 'º';
+    const rankNum = v => (v === null || v === undefined) ? null : (typeof v === 'string' ? parseInt(v, 10) : v);
+    const pct = (rank, n) => { const r = rankNum(rank); return (r === null || !n) ? null : r / n * 100; };
+    const isMobile = () => window.innerWidth < 768;
+
+    function baseLayout(extra = {}) {
+      return Object.assign({
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        separators: ',.',
+        font: { family: 'Inter, sans-serif', color: '#1f2937', size: 11 },
+        margin: { t: 20, r: 30, b: 60, l: 60 },
+        hovermode: 'closest',
+        hoverlabel: { bgcolor: 'white', bordercolor: '#d1e7d8', font: { family: 'Inter, sans-serif', size: 12, color: '#1f2937' } },
+        showlegend: false,
+        legend: {
+          orientation: 'h', y: -0.22, x: 0.5, xanchor: 'center',
+          bgcolor: 'rgba(255,255,255,0.9)', bordercolor: 'rgba(0,0,0,0.08)', borderwidth: 1,
+          font: { size: 11 }
+        }
+      }, extra);
+    }
+
+    function axis(extra = {}) {
+      return Object.assign({
+        fixedrange: true,
+        showgrid: true, gridcolor: colors.grid,
+        showline: true, linecolor: colors.axis, linewidth: 1,
+        zeroline: false,
+        tickfont: { size: 10, color: colors.tick },
+        title: { font: { size: 11, color: colors.tick } }
+      }, extra);
+    }
+
+    // Eixo X de anos com o nº de participantes sob cada ano
+    function yearAxis(nArr) {
+      return axis({
+        tickmode: 'array',
+        tickvals: Y,
+        ticktext: Y.map((y, i) => nArr ? `<b>${y}</b><br><span style="font-size:9px">${fmtInt(nArr[i])} inst.</span>` : `<b>${y}</b>`),
+        range: [Y[0] - 0.4, Y[LAST] + 0.4],
+        showgrid: false
+      });
+    }
+
+    function lineTrace(y, name, color, opts = {}) {
+      return Object.assign({
+        x: Y, y: y, name: name,
+        type: 'scatter', mode: 'lines+markers+text',
+        line: { color: color, width: 3 },
+        marker: { color: color, size: 10, line: { color: 'white', width: 2 } },
+        textposition: 'top center',
+        textfont: { size: 11, color: '#374151', family: 'Inter, sans-serif' },
+        cliponaxis: false
+      }, opts);
+    }
+
+    // Rótulos no fim das linhas, afastados para não se sobreporem
+    function endLabels(items, gap, reversed) {
+      const sorted = [...items].sort((a, b) => reversed ? a.v - b.v : b.v - a.v);
+      let prev = null;
+      return sorted.map(it => {
+        let y = it.v;
+        if (prev !== null) y = reversed ? Math.max(y, prev + gap) : Math.min(y, prev - gap);
+        prev = y;
+        return { x: lastYear, y: y, text: it.text, xanchor: 'left', xshift: 9, showarrow: false, font: { size: 10.5, color: '#374151', family: 'Inter, sans-serif' } };
+      });
+    }
+
+
+    function wireTabs(group, onChange) {
+      const box = document.querySelector(`.chart-tabs[data-group="${group}"]`);
+      box.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          box.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+          onChange(btn.dataset.tab);
+        });
+      });
+    }
+
+    // =====================================================================
+    // 1. CARDS
+    // =====================================================================
+    function renderCards() {
+      const P = data.position, N = data.participants, R = data.regional;
+      const k = R.years.length - 1;
+      const cards = [
+        { icon: 'fa-earth-americas', title: 'Posição mundial', value: ord(P.world[LAST]), sub: `de ${fmtInt(N.world[LAST])} instituições`, c: '#14532d' },
+        { icon: 'fa-globe', title: 'Posição nas Américas', value: ord(P.americas[LAST]), sub: `de ${fmtInt(N.americas[LAST])} instituições`, c: '#0f766e' },
+        { icon: 'fa-map-location-dot', title: R.names[k], value: ord(data.rankRegional.overall[k]), sub: `de ${fmtInt(R.n[k])} instituições`, c: '#15803d' },
+        { icon: 'fa-flag', title: 'Posição no Brasil', value: ord(P.brazil[LAST]), sub: `de ${fmtInt(N.brazil[LAST])} instituições`, c: '#4d7c0f' },
+        { icon: 'fa-building-columns', title: 'Entre as federais', value: ord(P.federais[LAST]), sub: 'universidades federais', c: '#059669' },
+        { icon: 'fa-star', title: 'Pontuação geral', value: fmt1(data.scores.overall[LAST]), sub: 'de 100 pontos', c: '#166534' }
+      ];
+
+      document.getElementById('kpi-cards').innerHTML = cards.map(card => `
+        <div class="col-6 col-md-4 col-xl-2">
+          <div class="indicator-card" style="--c:${card.c}">
+            <div class="card-body text-center">
+              <div class="card-icon"><i class="fas ${card.icon}"></i></div>
+              <h5 class="card-title">${card.title}</h5>
+              <div class="indicator-value">${card.value}</div>
+              <p class="card-subtitle">${card.sub}</p>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    // =====================================================================
+    // 2. POSIÇÃO
+    // =====================================================================
+    function positionYAxis(title, extra = {}) {
+      return axis(Object.assign({ autorange: 'reversed', title: { text: title, font: { size: 11, color: colors.tick } }, nticks: 5, tickformat: 'd', separatethousands: true }, extra));
+    }
+
+    // Barras de participantes (eixo da direita), desenhadas atrás da linha de posição
+    function participantsBar(n, color, label) {
+      return {
+        x: Y, y: n, yaxis: 'y2', type: 'bar', name: label,
+        marker: { color: hexToRgba(color, 0.14), line: { color: hexToRgba(color, 0.35), width: 1 } },
+        width: 0.5,
+        text: n.map(fmtInt), textposition: 'inside', insidetextanchor: 'start', textangle: 0,
+        textfont: { size: isMobile() ? 9 : 10, color: '#6b7280', family: 'Inter, sans-serif' },
+        hovertemplate: `<b>%{x}</b><br>${label}: <b>%{y:,}</b><extra></extra>`
+      };
+    }
+
+    function participantsAxis(n) {
+      return axis({
+        overlaying: 'y', side: 'right', showgrid: false, showline: false,
+        range: [0, Math.max(...n) * 1.7], nticks: 4, tickformat: ',d',
+        title: { text: 'Nº de participantes', font: { size: 11, color: colors.tick } }
+      });
+    }
+
+    function renderWorld() {
+      const p = data.position.world, n = data.participants.world;
+      const t = lineTrace(p, 'Posição da UFF', colors.world, {
+        text: p.map(ord),
+        customdata: n.map(fmtInt),
+        hovertemplate: '<b>%{x}</b><br>Posição mundial: <b>%{y}º</b><br>de %{customdata} instituições<extra></extra>'
+      });
+      Plotly.newPlot('chart-world', [participantsBar(n, colors.world, 'Nº de participantes'), t], baseLayout({
+        showlegend: true,
+        margin: { t: 20, r: 70, b: 60, l: 60 },
+        xaxis: yearAxis(null),
+        yaxis2: participantsAxis(n),
+        yaxis: positionYAxis('Posição (menor = melhor)', { autorange: false, range: [Math.max(...p) + 40, Math.min(...p) - 50] })
+      }), chartConfig);
+    }
+
+    function renderPercentile() {
+      const series = [
+        { key: 'world', name: 'Mundo' },
+        { key: 'americas', name: 'Américas' },
+        { key: 'brazil', name: 'Brasil' }
+      ];
+      const traces = series.map(s => {
+        const p = data.position[s.key], n = data.participants[s.key];
+        const v = p.map((r, i) => pct(r, n[i]));
+        return lineTrace(v, s.name, colors[s.key], {
+          mode: 'lines+markers',
+          customdata: p.map((r, i) => [ord(r), fmtInt(n[i])]),
+          hovertemplate: `<b>${s.name} · %{x}</b><br>Entre os <b>%{y:.1f}%</b> melhores<br>%{customdata[0]} de %{customdata[1]}<extra></extra>`
+        });
+      });
+      const pAnn = endLabels(series.map(s => {
+        const v = pct(data.position[s.key][LAST], data.participants[s.key][LAST]);
+        return { v: v, text: fmt1(v) + '%' };
+      }), 2.6, true);
+      Plotly.newPlot('chart-percentile', traces, baseLayout({
+        showlegend: true,
+        annotations: pAnn,
+        margin: { t: 20, r: 55, b: 60, l: 60 },
+        xaxis: yearAxis(null),
+        yaxis: axis({ autorange: false, range: [50, 0], title: { text: 'Top % (menor = melhor)', font: { size: 11, color: colors.tick } }, ticksuffix: '%', dtick: 10 })
+      }), chartConfig);
+    }
+
+    function renderBrazil() {
+      const b = data.position.brazil, f = data.position.federais, n = data.participants.brazil;
+      const traces = [
+        lineTrace(b, 'Brasil', colors.brazil, {
+          text: b.map(ord), textposition: 'bottom center',
+          customdata: n.map(fmtInt),
+          hovertemplate: '<b>%{x}</b><br>No Brasil: <b>%{y}º</b> de %{customdata}<extra></extra>'
+        }),
+        lineTrace(f, 'Entre as federais', colors.federais, {
+          text: f.map(ord), textposition: 'top center',
+          hovertemplate: '<b>%{x}</b><br>Entre as federais: <b>%{y}º</b><extra></extra>'
+        })
+      ];
+      const maxV = Math.max(...b, ...f);
+      Plotly.newPlot('chart-brazil', [participantsBar(n, colors.brazil, 'Participantes no Brasil'), ...traces], baseLayout({
+        showlegend: true,
+        margin: { t: 20, r: 70, b: 60, l: 60 },
+        xaxis: yearAxis(null),
+        yaxis2: participantsAxis(n),
+        yaxis: positionYAxis('Posição (menor = melhor)', { autorange: false, range: [maxV + 1.5, 0.5], dtick: 1 })
+      }), chartConfig);
+    }
+
+    function renderAmericas() {
+      const p = data.position.americas, n = data.participants.americas;
+      const t = lineTrace(p, 'Posição da UFF', colors.americas, {
+        text: p.map(ord),
+        customdata: n.map(fmtInt),
+        hovertemplate: '<b>%{x}</b><br>Nas Américas: <b>%{y}º</b><br>de %{customdata} instituições<extra></extra>'
+      });
+      Plotly.newPlot('chart-americas', [participantsBar(n, colors.americas, 'Nº de participantes'), t], baseLayout({
+        showlegend: true,
+        margin: { t: 20, r: 70, b: 60, l: 60 },
+        xaxis: yearAxis(null),
+        yaxis2: participantsAxis(n),
+        yaxis: positionYAxis('Posição (menor = melhor)', { autorange: false, range: [Math.max(...p) + 12, Math.min(...p) - 15] })
+      }), chartConfig);
+    }
+
+    // =====================================================================
+    // 3. PONTUAÇÃO
+    // =====================================================================
+    const radarKeys = ['envSust', 'envEdu', 'envRes', 'ke', 'equality', 'health', 'impactEdu', 'employ', 'governance'];
+    const radarShort = {
+      envSust: 'Sustentab.<br>Ambiental', envEdu: 'Educação<br>Ambiental', envRes: 'Pesquisa<br>Ambiental',
+      ke: 'Troca de<br>Conhecimento', equality: 'Equidade', health: 'Saúde e<br>Bem-estar',
+      impactEdu: 'Impacto da<br>Educação', employ: 'Empregabi-<br>lidade', governance: 'Governança'
+    };
+
+    function hexToRgba(hex, a) {
+      const h = hex.replace('#', '');
+      return `rgba(${parseInt(h.substr(0, 2), 16)}, ${parseInt(h.substr(2, 2), 16)}, ${parseInt(h.substr(4, 2), 16)}, ${a})`;
+    }
+
+    function renderRadar() {
+      const theta = radarKeys.map(k => radarShort[k]);
+      const thetaClosed = [...theta, theta[0]];
+      const names = radarKeys.map(k => ind[k].pt);
+      const traces = Y.map((year, yi) => {
+        const r = radarKeys.map(k => data.scores[k][yi]);
+        const isLast = yi === LAST;
+        return {
+          type: 'scatterpolar',
+          r: [...r, r[0]],
+          theta: thetaClosed,
+          customdata: [...names, names[0]],
+          fill: 'toself',
+          name: String(year),
+          line: { color: yearRamp[yi], width: isLast ? 3 : 1.5 },
+          fillcolor: hexToRgba(yearRamp[yi], isLast ? 0.22 : 0.05),
+          marker: { color: yearRamp[yi], size: isLast ? 7 : 4 },
+          hovertemplate: `<b>%{customdata}</b><br>${year}: %{r:.1f}<extra></extra>`
+        };
+      });
+      const m = isMobile();
+      Plotly.newPlot('chart-radar', traces, {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        separators: ',.',
+        font: { family: 'Inter, sans-serif', color: '#1f2937' },
+        margin: m ? { t: 30, r: 55, b: 40, l: 55 } : { t: 40, r: 70, b: 50, l: 70 },
+        height: m ? 380 : 450,
+        hoverlabel: { bgcolor: 'white', bordercolor: '#d1e7d8', font: { family: 'Inter, sans-serif', size: 12 } },
+        polar: {
+          bgcolor: 'rgba(0,0,0,0)',
+          radialaxis: { visible: true, range: [0, 100], dtick: 25, tickfont: { size: 8, color: '#9ca3af' }, gridcolor: 'rgba(20,83,45,0.10)', linecolor: 'rgba(0,0,0,0.1)', angle: 90, tickangle: 90 },
+          angularaxis: { tickfont: { size: m ? 8 : 10, color: '#4b5563' }, gridcolor: 'rgba(20,83,45,0.10)', linecolor: 'rgba(0,0,0,0.12)', direction: 'clockwise', rotation: 90 }
+        },
+        showlegend: true,
+        legend: { orientation: 'h', y: -0.08, x: 0.5, xanchor: 'center', font: { size: 11 } }
+      }, chartConfig);
+    }
+
+    const scoreTabs = {
+      indicadores: [['overall', colors.overall], ['envImpact', colors.env], ['socImpact', colors.soc], ['governance', colors.gov]],
+      ambiental: [['envSust', '#166534'], ['envEdu', '#0369A1'], ['envRes', '#B45309']],
+      social: [['ke', '#166534'], ['equality', '#0369A1'], ['health', '#B45309'], ['impactEdu', '#65A30D'], ['employ', '#9D174D']]
+    };
+
+    function renderScores(tab) {
+      const traces = scoreTabs[tab].map(([k, c]) => lineTrace(data.scores[k], ind[k].pt, c, {
+        mode: 'lines+markers',
+        line: { color: c, width: k === 'overall' ? 3.5 : 2.5, dash: k === 'overall' ? 'dot' : 'solid' },
+        marker: { color: c, size: 8, line: { color: 'white', width: 1.5 } },
+        hovertemplate: `<b>${ind[k].pt}</b> (${ind[k].en})<br>%{x}: <b>%{y:.1f}</b><extra></extra>`
+      }));
+      const sAnn = endLabels(scoreTabs[tab].map(([k]) => ({ v: data.scores[k][LAST], text: fmt1(data.scores[k][LAST]) })), 3.6, false);
+      Plotly.newPlot('chart-scores', traces, baseLayout({
+        showlegend: true,
+        annotations: sAnn,
+        margin: { t: 20, r: 45, b: 60, l: 55 },
+        legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center', font: { size: 10.5 }, bgcolor: 'rgba(255,255,255,0.9)' },
+        xaxis: yearAxis(null),
+        yaxis: axis({ range: [25, 100], dtick: 25, title: { text: 'Pontuação (0–100)', font: { size: 11, color: colors.tick } } })
+      }), chartConfig);
+    }
+
+    // =====================================================================
+    // 4. CLASSIFICAÇÃO POR INDICADOR (mini gráficos de linha)
+    // =====================================================================
+    const barScopes = {
+      world:    { rank: () => data.rankWorld,    n: () => data.participants.world,    cols: () => Y.map(String) },
+      americas: { rank: () => data.rankAmericas, n: () => data.participants.americas, cols: () => Y.map(String) },
+      brazil:   { rank: () => data.rankBrazil,   n: () => data.participants.brazil,   cols: () => Y.map(String) },
+      regional: { rank: () => data.rankRegional, n: () => data.regional.n,            cols: () => data.regional.labels.map(l => l.replace('<br>', ' · ')) }
+    };
+
+    // Painel de mini gráficos: um por indicador, mesma escala dentro da aba
+    const miniOrder = ['overall', 'envImpact', 'socImpact', 'governance', 'envSust', 'envEdu', 'envRes', 'ke', 'equality', 'health', 'impactEdu', 'employ'];
+    const trendColor = { up: '#166534', down: '#B45309', flat: '#6b7280' };
+
+    function niceStep(v) {
+      const p = Math.pow(10, Math.floor(Math.log10(v)));
+      const f = v / p;
+      return (f >= 5 ? 5 : f >= 2 ? 2 : 1) * p;
+    }
+
+    function renderMinis(scope) {
+      const S = barScopes[scope];
+      const R = S.rank(), N = S.n();
+      const regional = scope === 'regional';
+      const x = regional ? data.regional.years.map(String) : Y.map(String);
+      const m = isMobile();
+
+      const grid = document.getElementById('mini-grid');
+      grid.querySelectorAll('.js-plotly-plot').forEach(el => Plotly.purge(el));
+      grid.innerHTML = miniOrder.map(k => {
+        const i = ind[k];
+        const main = k === 'overall' || i.pillar;
+        return `<div class="mini-card"><div class="mini-title${main ? ' main' : ''}">${(m && i.short) ? i.short : i.pt}</div><div id="mini-${k}"></div></div>`;
+      }).join('');
+
+      // escala comum da aba
+      const maxR = Math.max(...miniOrder.flatMap(k => R[k].map(rankNum)).filter(v => v !== null));
+      const step = niceStep(maxR / 2);
+      const tickvals = [1, step, 2 * step].filter(v => v <= maxR * 1.05);
+
+      miniOrder.forEach(k => {
+        const vals = R[k], nums = vals.map(rankNum);
+        const idx = nums.map((v, i) => v === null ? -1 : i).filter(i => i >= 0);
+        const first = idx[0], last = idx[idx.length - 1];
+        const trend = nums[last] < nums[first] ? 'up' : nums[last] > nums[first] ? 'down' : 'flat';
+        const c = trendColor[trend];
+        const isBand = v => typeof v === 'string';
+
+        const lineSeg = (from, to, dash) => ({
+          x: x.slice(from, to + 1), y: nums.slice(from, to + 1),
+          type: 'scatter', mode: 'lines', line: { color: c, width: 2.5, dash: dash },
+          connectgaps: false, hoverinfo: 'skip'
+        });
+        // Regional: o trecho que muda de recorte (Am. do Sul → AL e Caribe) fica tracejado
+        const lines = regional ? [lineSeg(0, x.length - 2, 'solid'), lineSeg(x.length - 2, x.length - 1, 'dot')] : [lineSeg(0, x.length - 1, 'solid')];
+
+        const points = {
+          x: x, y: nums, type: 'scatter', mode: 'markers+text',
+          marker: {
+            color: vals.map(v => isBand(v) ? 'white' : c), size: 7,
+            symbol: 'circle', line: { color: c, width: vals.map(v => isBand(v) ? 2 : 1.5) }
+          },
+          text: vals.map((v, i) => (i === first || i === last) && v !== null ? ord(v) : ''),
+          textposition: 'top center',
+          textfont: { size: m ? 9 : 10, color: '#374151', family: 'Inter, sans-serif' },
+          cliponaxis: false,
+          customdata: vals.map((v, i) => [v === null ? 'sem dado' : ord(v), fmtInt(N[i]), regional ? data.regional.names[i] : '']),
+          hovertemplate: `<b>${ind[k].pt}</b><br>%{x}${regional ? ' · %{customdata[2]}' : ''}: <b>%{customdata[0]}</b> de %{customdata[1]}<extra></extra>`
+        };
+
+        Plotly.newPlot(`mini-${k}`, [...lines, points], baseLayout({
+          height: m ? 150 : 175,
+          margin: { t: 14, r: 16, b: 24, l: 34 },
+          xaxis: axis({ type: 'category', showgrid: false, tickangle: 0, tickmode: 'array', tickvals: x, ticktext: m ? x.map(v => "'" + v.slice(2)) : x, tickfont: { size: 9, color: colors.tick }, range: m ? [-0.75, x.length - 0.35] : [-0.45, x.length - 0.55] }),
+          yaxis: axis({ range: [maxR * 1.06, -maxR * 0.12], tickmode: 'array', tickvals: tickvals, ticksuffix: 'º', tickformat: ',d', showline: false, tickfont: { size: 8, color: '#9ca3af' } })
+        }), chartConfig);
+      });
+
+      const sw = (col, dash, label) => `<span class="mini-key"><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="${col}" stroke-width="2.5" stroke-dasharray="${dash}"/></svg>${label}</span>`;
+      document.getElementById('mini-legend').innerHTML =
+        sw(trendColor.up, '', 'Melhorou') + sw(trendColor.down, '', 'Piorou') + sw(trendColor.flat, '', 'Manteve') +
+        (regional ? sw('#6b7280', '1 4', 'Am. do Sul → AL e Caribe') : '');
+    }
+
+    // =====================================================================
+    // INICIALIZAÇÃO
+    // =====================================================================
+    let currentScores = 'indicadores', currentMinis = 'world';
+
+    function renderAll() {
+      renderWorld();
+      renderPercentile();
+      renderBrazil();
+      renderAmericas();
+      renderRadar();
+      renderScores(currentScores);
+      renderMinis(currentMinis);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.js-last-year').forEach(el => el.textContent = lastYear);
+      document.getElementById('header-badge').innerHTML = `<i class="fas fa-calendar-check me-1"></i>Edição ${lastYear}`;
+      document.getElementById('footer-years').textContent = `${Y[0]}–${lastYear}`;
+
+      renderCards();
+      renderAll();
+
+      wireTabs('scores', t => { currentScores = t; renderScores(t); });
+      wireTabs('minis', t => { currentMinis = t; renderMinis(t); });
+
+      // redesenha ao cruzar o breakpoint de celular (margens/rótulos mudam)
+      let wasMobile = isMobile(), timer;
+      window.addEventListener('resize', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          if (isMobile() !== wasMobile) { wasMobile = isMobile(); renderAll(); }
+        }, 200);
+      });
+    });
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
