@@ -10,7 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Plotly JS -->
-  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -483,7 +483,7 @@
         <div class="indicator-card card-4">
           <div class="card-body text-center">
             <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-            <h5 class="card-title">Posição Top 10% (P)</h5>
+            <h5 class="card-title">Posição Top 10% (P Top 10%)</h5>
             <div class="indicator-value" id="kpi-mu-ptop">–</div>
             <p class="card-subtitle" id="kpi-mu-ptop-sub"></p>
           </div>
@@ -586,8 +586,10 @@
     const N = data.years.length;
     const FIRST_YEAR = data.years[0];
     const LAST_YEAR = data.years[N - 1];
-    // Folga à direita para o rótulo do último valor não ser cortado
-    const X_RANGE = [FIRST_YEAR - 0.5, LAST_YEAR + 1.1];
+    const X_RANGE = [FIRST_YEAR - 0.5, LAST_YEAR + 0.5];
+
+    // Contorno branco nos rótulos para não ficarem sobre as linhas
+    const HALO = '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff';
 
     const last = arr => arr[arr.length - 1];
     const fmtInt = v => Number(v).toLocaleString('pt-BR');
@@ -595,8 +597,6 @@
     const fmtPct = (v, digits = 1) =>
       (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: digits, maximumFractionDigits: digits }) + '%';
     const joinYears = ys => ys.length <= 1 ? ys.join('') : ys.slice(0, -1).join(', ') + ' e ' + last(ys);
-    // Rótulo apenas no último ponto
-    const lastOnly = (arr, fmt) => arr.map((v, i) => (i === arr.length - 1 ? fmt(v) : ''));
 
     function setText(id, txt) {
       const el = document.getElementById(id);
@@ -734,8 +734,8 @@
       };
     }
 
-    // Linha sem marcadores, com rótulo apenas no valor mais recente
-    function lineTrace(y, { name, color, fmt, hover, yaxis = 'y' }) {
+    // Linha sem marcadores, com rótulo em todos os anos
+    function lineTrace(y, { name, color, fmt, hover, yaxis = 'y', pos = 'top center' }) {
       return {
         x: data.years,
         y,
@@ -744,9 +744,9 @@
         name,
         yaxis,
         line: { color, width: 3, shape: 'linear' },
-        text: lastOnly(y, fmt),
-        textposition: 'middle right',
-        textfont: { size: 11, color, family: FONT },
+        text: y.map(fmt),
+        textposition: pos,
+        textfont: { size: 9, color, family: FONT, shadow: HALO },
         cliponaxis: false,
         hovertemplate: `${name}: ${hover}<extra></extra>`
       };
@@ -774,9 +774,9 @@
         type: 'bar',
         name: 'Total de publicações',
         marker: { color: colors.pBar, line: { color: '#93C5FD', width: 1 } },
-        text: lastOnly(data.publicacoes, fmtInt),
+        text: data.publicacoes.map(fmtInt),
         textposition: 'outside',
-        textfont: { size: 11, color: colors.p, family: FONT },
+        textfont: { size: 9, color: colors.p, family: FONT },
         cliponaxis: false,
         hovertemplate: 'Total: %{y:,d}<extra></extra>'
       };
@@ -811,8 +811,8 @@
 
       // 3. Posições no Brasil
       Plotly.newPlot('brasil-posicoes-chart', [
-        lineTrace(data.brasilP, { name: 'Posição (P)', color: colors.p, fmt: fmtPos, hover: '%{y}º' }),
-        lineTrace(data.brasilPTop10, { name: 'Posição Top 10% (P)', color: colors.top10, fmt: fmtPos, hover: '%{y}º' }),
+        lineTrace(data.brasilP, { name: 'Posição (P)', color: colors.p, fmt: fmtPos, hover: '%{y}º', pos: 'bottom center' }),
+        lineTrace(data.brasilPTop10, { name: 'Posição Top 10% (P Top 10%)', color: colors.top10, fmt: fmtPos, hover: '%{y}º', pos: 'bottom center' }),
         lineTrace(data.brasilPPTop10, { name: 'Posição PP Top 10%', color: colors.pp, fmt: fmtPos, hover: '%{y}º' })
       ], (() => {
         const l = baseLayout({ yTitle: 'Posição (menor = melhor)', reversed: true, legend: true });
@@ -842,7 +842,7 @@
 
       // 6. Indicadores de impacto mundial
       Plotly.newPlot('mundo-indicadores-chart', [
-        lineTrace(data.mundoPTop10, { name: 'Posição Top 10% (P)', color: colors.top10, fmt: fmtPos, hover: '%{y:,d}º' }),
+        lineTrace(data.mundoPTop10, { name: 'Posição Top 10% (P Top 10%)', color: colors.top10, fmt: fmtPos, hover: '%{y:,d}º', pos: 'bottom center' }),
         lineTrace(data.mundoPPTop10, { name: 'Posição PP Top 10%', color: colors.pp, fmt: fmtPos, hover: '%{y:,d}º' })
       ], baseLayout({ yTitle: 'Posição (menor = melhor)', reversed: true, legend: true }), chartConfig);
     }
